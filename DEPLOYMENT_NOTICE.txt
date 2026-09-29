@@ -1,0 +1,7 @@
+Atlas v2 public demonstrator.
+Only the visualization client and minimal static-serving code are published here.
+Scientific source code, datasets, executable research scripts, and reproducibility artifacts are not part of this GitHub deployment.
+Frozen/live Atlas SHA-256:
+F10BDD9AA3D64F7120B4DD69777C9A8CDD0E15FD13CC2F05CEDD0BFFB396A523
+Zenodo v085 DOI:
+10.5281/zenodo.23042784
