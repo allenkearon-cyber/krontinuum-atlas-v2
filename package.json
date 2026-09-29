@@ -1,0 +1,12 @@
+﻿{
+    "name":  "krontinuum-atlas-v2",
+    "version":  "2.0.0",
+    "private":  true,
+    "scripts":  {
+                    "start":  "node server.js"
+                },
+    "engines":  {
+                    "node":  "\u003e=20"
+                },
+    "license":  "SEE LICENSE IN LICENSE.md"
+}
