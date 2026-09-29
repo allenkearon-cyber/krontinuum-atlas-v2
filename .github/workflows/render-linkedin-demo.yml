@@ -1,0 +1,45 @@
+name: Render LinkedIn Atlas demo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/render_linkedin_demo.py"
+      - ".github/workflows/render-linkedin-demo.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install renderer dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright pillow imageio-ffmpeg
+          python -m playwright install --with-deps chromium
+
+      - name: Render video
+        run: python tools/render_linkedin_demo.py
+
+      - name: Commit rendered media
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/Krontinuum_Atlas_v2_LinkedIn_Demo_v085.mp4 media/Krontinuum_Atlas_v2_LinkedIn_Thumbnail.jpg
+          if git diff --cached --quiet; then
+            echo "No media changes"
+          else
+            git commit -m "Add rendered LinkedIn Atlas demo [skip ci]"
+            git push
+          fi
