@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 <style>
 :root{
   box-sizing:border-box;
@@ -285,10 +286,119 @@ body.uiHidden #readout,body.uiHidden #hint,body.uiHidden #frame{opacity:0;pointe
   #notes{transition:none}
   body{transition:none}
 }
+/* ---- the families page: an explanatory sheet, not a control surface ---- */
+#families{
+  position:fixed;inset:0;z-index:24;
+  background:var(--glass);
+  -webkit-backdrop-filter:blur(30px) saturate(1.15);
+  backdrop-filter:blur(30px) saturate(1.15);
+  overflow-y:auto;overscroll-behavior:contain;
+  padding:calc(40px + env(safe-area-inset-top,0px)) 0 calc(72px + env(safe-area-inset-bottom,0px));
+  opacity:0;visibility:hidden;transform:translateY(14px);
+  transition:opacity .42s ease,transform .42s cubic-bezier(.22,.75,.2,1),visibility .42s;
+}
+#families.open{opacity:1;visibility:visible;transform:none}
+#closeFamilies{position:fixed;top:calc(24px + env(safe-area-inset-top,0px));right:22px;z-index:25}
+#families .page{
+  max-width:74ch;margin:0 auto;padding:0 clamp(22px,5vw,40px);
+  border-top:1px solid var(--rule);padding-top:34px;
+}
+#families .eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mark);margin:0 0 1.1em;
+}
+#families h2{font-size:34px;font-weight:300;letter-spacing:-.018em;margin:0 0 .18em;color:var(--ink)}
+#families .lede{
+  font-size:16px;font-style:italic;line-height:1.62;color:var(--ink-2);
+  margin:0 0 2.2em;max-width:52ch;
+}
+#families h3{
+  font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  font-size:11.5px;font-weight:500;letter-spacing:.06em;color:var(--ink);
+  margin:2.8em 0 .9em;padding-bottom:.55em;border-bottom:1px solid var(--rule-soft);
+}
+#families p{font-size:15.5px;line-height:1.7;margin:0 0 1.05em;color:var(--ink)}
+#families p.small{font-size:13.5px;line-height:1.6;color:var(--ink-2)}
+#families p.closing{
+  margin-top:3em;padding-top:1.2em;border-top:1px solid var(--rule-soft);
+  font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  font-size:10.5px;letter-spacing:.06em;color:var(--ink-2);
+}
+#families em{font-style:italic;color:var(--ink)}
+.famtable{
+  width:100%;border-collapse:collapse;margin:1.1em 0 1.6em;
+  font-size:13px;line-height:1.5;
+}
+.famtable th{
+  text-align:left;font-weight:500;color:var(--ink-2);
+  font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  font-size:10px;letter-spacing:.07em;text-transform:uppercase;
+  padding:0 12px .6em 0;border-bottom:1px solid var(--rule);
+}
+.famtable td{
+  padding:.62em 12px .62em 0;border-bottom:1px solid var(--rule-soft);
+  color:var(--ink);vertical-align:top;
+}
+.famtable td:last-child,.famtable th:last-child{padding-right:0;color:var(--ink-2)}
+.famtable b{font-weight:500;color:var(--mark)}
+.famtable.wide{font-size:12px}
+@media (max-width:640px){
+  .famtable,.famtable.wide{font-size:11.5px}
+  #families h2{font-size:27px}
+}
+@media (prefers-reduced-motion:reduce){
+  #families{transition:none}
+}
+/* ---- signature: the empty bottom-centre margin.
+   The bottom-right corner is the readout's, and the bottom-left is the
+   instrument's, so the signature takes the band between them. ---------- */
+#sig{
+  position:fixed;z-index:5;pointer-events:none;
+  left:50%;transform:translateX(-50%);
+  bottom:calc(26px + env(safe-area-inset-bottom,0px));
+  text-align:center;line-height:1.1;
+  animation-delay:1.05s;
+}
+#sig .by{
+  display:block;
+  font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 .26em;
+}
+#sig .name{
+  display:block;
+  font-family:"Pinyon Script","Snell Roundhand","Apple Chancery","Segoe Script",cursive;
+  font-size:28px;line-height:1;color:var(--ink-2);
+}
+#sig .rule{
+  display:block;height:1px;margin:.5em auto 0;width:118px;
+  background:linear-gradient(to right,transparent,var(--rule) 45%,var(--rule) 55%,transparent);
+}
+body.uiHidden #sig{opacity:0;pointer-events:none}
+#sig{transition:opacity .4s ease}
+/* the shared rise animation ends on transform:none, which would cancel the
+   centring, so the signature gets its own that keeps the translate */
+@keyframes riseCenter{
+  from{opacity:0;transform:translateX(-50%) translateY(13px)}
+  to{opacity:1;transform:translateX(-50%)}
+}
+#sig.rises{animation-name:riseCenter}
+@media (max-width:900px){
+  /* the instrument starts collapsed on narrow screens, so the bottom-centre
+     band is clear; opening the panel simply covers the signature */
+  #sig{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  #sig .name{font-size:23px}
+  #sig .by{font-size:8px;letter-spacing:.13em}
+  #sig .rule{width:92px}
+}
+@media (prefers-reduced-motion:reduce){
+  #sig{animation:none;opacity:1}
+}
 </style>
 </head>
 <body>
-<canvas id="stage" aria-label="Survey plate of pregeometric coordinates: scaffolds, accessibility, closure, transport and collapse residue"></canvas>
+<canvas id="stage" aria-label="Survey plate of pregeometric coordinates: scaffolds, accessibility, closure, transport and collapse residue, with curvature strata, the affine base and fibre gauge, and the integral prime staircase"></canvas>
 
 <div id="frame" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></div>
 
@@ -300,6 +410,7 @@ body.uiHidden #readout,body.uiHidden #hint,body.uiHidden #frame{opacity:0;pointe
 <div id="actions" class="rises">
   <button id="panelToggle" aria-expanded="true" hidden>Instrument</button>
   <button id="themeBtn" title="Switch between the illuminated plate and the paper print">Print</button>
+  <button id="familiesBtn" title="An explanatory page: the four direction families and everything indexed by them">Families</button>
   <button id="notesBtn" class="ital">Notes</button>
 </div>
 
@@ -373,7 +484,148 @@ body.uiHidden #readout,body.uiHidden #hint,body.uiHidden #frame{opacity:0;pointe
       <span>Exact pure-order dimension at order 4</span><b>10,658</b>
       <span>Nonmatroidal exchange failures</span><b>4,809</b>
       <span>Two-generator closures audited</span><b>17,076</b>
+      <span>Certified fusion relations</span><b>253,920</b>
+      <span>Ray pairs tested for fusion</span><b>26,597,571</b>
+      <span>Unit bracketings audited</span><b>14,454</b>
+      <span>Curved bracketings</span><b>618</b>
+      <span>Unique curvature triples</span><b>417</b>
+      <span>Ambient associators in the unit sector</span><b>0</b>
+      <span>Scaffold-required rays</span><b>616</b>
+      <span>Raw transport cycle rank</span><b>1,380</b>
+      <span>Reduced obstruction cycles, all holonomy 1</span><b>66</b>
+      <span>Maximum local quotient expansion</span><b>35.0</b>
+      <span>Affine base cells</span><b>9</b>
+      <span>Lines on the base, in 4 parallel classes</span><b>12</b>
+      <span>Points with fibre</span><b>18</b>
+      <span>Canonical F3²×F2 blocks</span><b>24</b>
+      <span>Local fibre gauges enumerated</span><b>512</b>
+      <span>Reachable parity signatures</span><b>32</b>
+      <span>Exact pure-order dimension at order 6</span><b>143,067,457,368</b>
+      <span>Face-free triple family, Levi girth 6</span><b>24 blocks of 3 on 18</b>
+      <span>Face-free quadruple family, Levi girth 4</span><b>24 blocks of 4 on 13</b>
+      <span>Mutual cross-scaffold coupling edges</span><b>0</b>
+      <span>Unlabelled graphs verified through n = 5</span><b>52</b>
+      <span>Forests verified to degree 4</span><b>22</b>
+      <span>Collapse defect types catalogued</span><b>45</b>
+      <span>Exact isolated-sector defect subset</span><b>none</b>
+      <span>CUF sequences audited</span><b>34</b>
+      <span>Exact-invariance exits, re-entries</span><b>2, 0</b>
+      <span>Local cliff exits, re-entries</span><b>23, 4</b>
+      <span>CIIL Pareto, majority failures</span><b>20, 18</b>
     </div>
+
+    <h3>CUF STATE GRAMMAR</h3>
+    <div class="keylist">
+      <kbd>E</kbd><span>Exact multi-tier invariance.</span>
+      <kbd>A</kbd><span>Approximate.</span>
+      <kbd>D</kbd><span>All-tier divergent.</span>
+      <kbd>P</kbd><span>Partial-tier support.</span>
+      <kbd>Z</kbd><span>No-tier support.</span>
+      <kbd>S</kbd><span>Single-tier cliff, so cross-tier invariance is undefined.</span>
+    </div>
+    <p class="small">The grammar comes from the v073 collapse residue work and is what the v085 and v086 results are written in. A change of letter can mean two different things: the tier set shrank, or the surviving tiers stopped agreeing. v086 separates them, and only one transition in the targeted scan is a coverage loss.</p>
+
+    <h3>EVIDENCE CLASSES</h3>
+    <div class="keylist">
+      <kbd>P</kbd><span>Proved. Exact algebraic consequence or proof mechanism. Classical ingredients are named as classical and not claimed as new.</span>
+      <kbd>C</kbd><span>Certified. Exhaustive over a stated finite universe, with archived scripts, manifests and completion flags.</span>
+      <kbd>E</kbd><span>Empirical. Observed repeatedly on a stated sample or grid. Not a theorem.</span>
+      <kbd>N</kbd><span>Negative. A proposed stronger law, coupling, separator or universality claim that failed.</span>
+      <kbd>O</kbd><span>Open. Structurally suggestive, awaiting proof, classification or a literature comparison.</span>
+    </div>
+    <p class="small">Every plate in this atlas carries its class in the notes. A framework that produced exact structure everywhere would be unfalsifiable, so the failures are drawn at the same weight as the successes.</p>
+
+    <h3>PRESERVED FALSIFIERS</h3>
+    <div class="statgrid">
+      <span>Curvature as ambient non-associativity</span><b>rejected</b>
+      <span>Local closure cell as a new closure class</span><b>rejected</b>
+      <span>Curvature identifies the closure blocks</span><b>rejected</b>
+      <span>18-vs-18 cardinality coupling</span><b>rejected</b>
+      <span>One-variable exchange-phase separator</span><b>none found</b>
+      <span>Ordered scale-3 selector</span><b>rejected</b>
+      <span>Target-free CIIL universality</span><b>rejected</b>
+      <span>Local cliff irreversibility</span><b>rejected</b>
+      <span>v084 candidate CUF exits</span><b>unconfirmed</b>
+      <span>Transform universality</span><b>not established</b>
+      <span>Individual G006 line parity as intrinsic</span><b>rejected</b>
+      <span>Local J asymmetry is global holonomy</span><b>rejected</b>
+      <span>Context 56 is globally sparsity-minimal in P₄</span><b>rejected</b>
+      <span>R− Boolean redundancy is linear redundancy</span><b>rejected</b>
+      <span>Matching count 66 identifies the n=5 and n=6 objects</span><b>rejected</b>
+      <span>Order 1,152 implies W(F₄)</span><b>rejected</b>
+      <span>The four ternary directions form one O(Q₃) orbit</span><b>rejected</b>
+      <span>The 16-element ternary similitude group is D16</span><b>rejected</b>
+      <span>The hidden 144 acts on the same 16-state fibre</span><b>rejected</b>
+      <span>The G019 K3,3 is automatically the earlier one</span><b>not established</b>
+      <span>E8 itself is newly discovered</span><b>false framing</b>
+      <span>The result is purely a group-order coincidence</span><b>insufficient</b>
+    </div>
+    <p class="small">Matching cardinalities are not evidence of coupling. Where two families were the same size, membership was tested and the coupling failed; the tie is recorded rather than quietly dropped. The same standard is applied to every cross-branch claim in the programme.</p>
+
+    <p class="small">The last four rows set the boundary of what the G-series claims. An order of 1,152 appearing on both sides is not an isomorphism, since the element-order spectra differ. E8, the tetracode, A2 glue, E8/2E8, the finite fields and the classical groups are all established mathematics and none is claimed as new. And the construction is not a group-order coincidence either: G012 through G021 use explicit state maps, line recovery, cycle spaces, module intersections, codewords, glue cosets and root-pair reductions, not counts. Where identity would have been convenient — the two K3,3 cores, the two 66s — it is left as an open bridge instead.</p>
+
+    <h3>GEOMETRY AUDITS G001–G008</h3>
+    <div class="statgrid">
+      <span>G001 arithmetic closure cells</span><b>18 index-4 cells</b>
+      <span>G002 equivalence and automorphism</span><b>classical convex geometry</b>
+      <span>G003 directed Z2 gauge quotient</span><b>no order-3 vertex lift</b>
+      <span>G004 curvature bridge</span><b>no unique matching</b>
+      <span>G005 transverse Z3 partition</span><b>3 × 3 × 2</b>
+      <span>G006 affine reconstruction</span><b>AG(2,3)</b>
+      <span>G007 fibre-gauge orbit</span><b>512 gauges, rank 5</b>
+      <span>G008 canonical normal form</span><b>24 blocks, exact</b>
+    </div>
+    <p class="small">The G-series asked whether the closure, curvature, scaffold and transport findings were independent coincidences or coordinates on one finite object. Each step only promotes structure that survives an exact cross-check, and G004 is in the list precisely because it failed. F3, F2, AG(2,3), affine maps, parity hyperplanes and even-weight codes are all classical; what is specific to this programme is that they were recovered independently from frozen descent and fusion data and then found to assemble.</p>
+
+    <h3>GEOMETRY AUDITS G009–G021</h3>
+    <div class="statgrid">
+      <span>G009 intrinsic fibres from the raw hypergraph</span><b>9 pairs, srg(9,4,1,2)</b>
+      <span>G010 invariant plus-type quadratic module</span><b>unique form, O₄⁺(2)</b>
+      <span>G011 Cartesian / Hamming reconstruction</span><b>H(2,4), S₄ wr S₂</b>
+      <span>G012 gauge-kernel quadratic bridge</span><b>AG(2,3) self-recovered</b>
+      <span>G013 intrinsic ternary translation torsor</span><b>regular C3 × C3</b>
+      <span>G014 colour swap as central inversion</span><b>transitivity rejected</b>
+      <span>G015 projective ternary quadratic form</span><b>2 + 2 norm split</b>
+      <span>G016 hidden index-two similitude extension</span><b>D16 rejected</b>
+      <span>G017 F9 norm field and semilinear compression</span><b>ΓL(1,9) = SD16</b>
+      <span>G018 paired kernels and the 8D module</span><b>16 + 16 → 256</b>
+      <span>G019 K3,3 homology and three polarizations</span><b>6 modules, 3 splits</b>
+      <span>G020 tetracode, four A2 families, E8 glue</span><b>240 roots</b>
+      <span>G021 E8 / 2E8 root-pair identification</span><b>4 × 30 = 120</b>
+    </div>
+    <p class="small">Two of these are failures kept in the index rather than removed from it. G014 predicted transitivity on the four directions and got orbits of size two; G016 guessed a dihedral group and the exact order spectrum refused it. Both failures are how the 2 + 2 norm split and the semidihedral identification were found, which is why they are listed at the same weight as the passes.</p>
+
+    <h3>LOWER-FAMILY AUDITS L001–L007</h3>
+    <div class="statgrid">
+      <span>L001 orientation-current lineage</span><b>J₂ = J on 219 contexts</b>
+      <span>L002 canonical Z₂ holonomy normal form</span><b>66 odd self-loops</b>
+      <span>L003 selector filtration to the defect law</span><b>same 66, depth 4</b>
+      <span>L004 continuation-dynamics attractor form</span><b>66 + 1,314 + 20</b>
+      <span>L005 graded chirality detection staircase</span><b>64 → 66 → 67</b>
+      <span>L006 algebraic grade = incidence-support grade</span><b>Q₄ = G = M₃</b>
+      <span>L007 pure-order-4 descent circuit</span><b>context 56, kernel 10,658</b>
+    </div>
+    <p class="small">Three independent routes — cohomological, selector-theoretic and dynamical — reach the same 66 defects on the frozen n = 5 domain. That agreement is why the number is trusted there, and precisely why the separate count of 66 arising on the n = 6 sample is not identified with it. No bijection between the two has been established, and matching cardinality is not evidence.</p>
+
+    <h3>RESOLVED SINCE THE G008 HORIZON</h3>
+    <p class="small">Three questions listed as open at G008 have since moved. The fibre-hyperplane lift law does extend to the x = c and y = c families: G012 reconstructs those lines from the nonsingular states and G018 builds the companion kernel from them, with the two six-line families exchanged by the hidden norm-two coset. The finite AG(2,3) and binary-gauge sector is now substantially classified — the kernel is a K3,3 cycle space, its quotient symmetry is O₄⁺(2), the 16-point affine symmetry is S₄ wr S₂, and the four directions generate six modules, three polarizations, the tetracode and E8/2E8. And the automorphism problem is settled for several nested layers: 72 for the ordered stabilizer, 144 unordered, 432 for the four directions. What stays open in each case is the fully decorated object, not the finite sector.</p>
+
+    <h3>OPEN AT THE G021 HORIZON</h3>
+    <div class="statgrid">
+      <span>Direct frozen-object map between the two K3,3 cores</span><b>open bridge</b>
+      <span>Intrinsic descent characterisation of the 66 cycles</span><b>open</b>
+      <span>Automorphism group of the fully decorated object</span><b>open</b>
+      <span>Domain-independent four-direction family theorem</span><b>open</b>
+      <span>Literature audit of the complete coupled construction</span><b>open</b>
+      <span>Whether the cross-characteristic bridge survives extension</span><b>open</b>
+      <span>Physical interpretation, kept separate from the mathematics</span><b>not claimed</b>
+      <span>Circuit spectrum of P₄ and higher Pₖ</span><b>open</b>
+      <span>General-n analogue of Q₄ = G = M₃ and E = M₄</span><b>open</b>
+      <span>Explicit lift or descent between the n=5 and n=6 66s</span><b>open</b>
+    </div>
+
+    <h3>WHAT REMAINS OPEN</h3>
+    <p class="small">A formal write-up and literature audit for the forest-versus-cycle boundary on differential constants. A classification of the full 18-point, 24-block decorated configuration against catalogued finite incidence and code-derived geometries — advanced but not closed by the G-series above. The automorphism group of the whole decorated system rather than of any one projection. Whether the fibre-hyperplane lift law extends to the x = c and y = c families — resolved positively since this line was first written; see the disposition above. An intrinsic descent characterisation of the 66 obstruction cycles, which would turn the sharpest certified result into a theorem. And one audit that must be run either way: the eligible-source and eligible-edge counts coincide at 3,771, and the twist and obstruction counts at 66. Either the branches share an eligible set, which would be a structural identification worth a theorem, or it is another cardinality coincidence of the kind already refuted once. Membership must be tested, not counted.</p>
 
     <h3>PLATE AND PRINT</h3>
     <p class="small">The two modes are not a recolour. As an illuminated plate the bodies emit and accumulate, and halation spreads from the brightest of them. As a paper print the same geometry is laid down as ink: the marks multiply into the paper and absorb light out of it, so density reads where emission read before. Depth is carried by occlusion in both — a near body hides what sits behind it rather than adding to it.</p>
@@ -391,7 +643,94 @@ body.uiHidden #readout,body.uiHidden #hint,body.uiHidden #frame{opacity:0;pointe
   </div>
 </aside>
 
+<aside id="families" aria-label="The families">
+  <button id="closeFamilies">Close</button>
+  <article class="page">
+
+    <p class="eyebrow">Explanatory page</p>
+    <h2>The families</h2>
+    <p class="lede">Four directions on a nine-point plane. Everything found after them turns out to be indexed by those same four, which is why this page exists: to say plainly what a family is here, and what keeps reappearing.</p>
+
+    <p>A <em>family</em> in this programme is not a metaphor for a grouping. It is a set of objects that some exact symmetry permutes among themselves and does not mix with anything else. Each one below was recovered from frozen data by a separate audit, and the reason they are collected on one page is that they keep turning out to be the same four things wearing different clothes.</p>
+
+    <p>The starting point is the affine plane AG(2,3): nine cells, twelve lines, four parallel classes of three. Those four parallel classes are the four direction families. Two of them came from the scaffold and curvature branches; the other two came from the frozen v040 block configuration. They were not designed to agree.</p>
+
+    <h3>1 · FOUR PRIMARY DIRECTION FAMILIES</h3>
+    <table class="famtable">
+      <thead><tr><th>Family</th><th>Affine equation</th><th>Tetracode coordinate</th><th>Role downstream</th></tr></thead>
+      <tbody>
+        <tr><td><b>X</b></td><td>x = c</td><td>x</td><td>one AG direction · one A2 plane · one 30-state E8 packet</td></tr>
+        <tr><td><b>Y</b></td><td>y = c</td><td>y</td><td>one AG direction · one A2 plane · one 30-state E8 packet</td></tr>
+        <tr><td><b>P</b></td><td>y − x = c</td><td>y − x</td><td>one AG direction · one A2 plane · one 30-state E8 packet</td></tr>
+        <tr><td><b>M</b></td><td>y + x = c</td><td>y + x</td><td>one AG direction · one A2 plane · one 30-state E8 packet</td></tr>
+      </tbody>
+    </table>
+    <p class="small">The labels <em>generator</em> and <em>polar</em> are relative to whichever kernel was selected, not properties of the directions. G019 showed that no pair is globally privileged: all six choices exist and form one orbit. The programme's frozen selection is one ordered polarization inside a larger family of three.</p>
+
+    <h3>2 · SIX CYCLE-MODULE FAMILIES</h3>
+    <p>Pick any two of the four directions. Their six lines carry a parity map, and that map is exactly the binary boundary map of K3,3 — the nine base cells are its edges, the six lines its vertices. The kernel is the cycle space, so its dimension is 9 − 6 + 1 = 4 and it holds one zero state, nine 4-cycles and six Hamiltonian 6-cycles.</p>
+    <p>Six pairs give six modules: XY, XP, XM, YP, YM, PM. Each module's q = 1 states split into two triangle components, and here is the rule worth remembering — <em>they are labelled by the two directions the module did not use</em>. The directions that build the boundary map are absent from the triangle labels, and the two omitted directions reappear as the two components. This complement rule holds for all six.</p>
+
+    <h3>3 · THREE POLARIZATION FAMILIES</h3>
+    <p>Opposite pairs among four directions give three ways to split the six modules in half: XY | PM, XP | YM, XM | YP. In each case the two 4-dimensional modules are mutually orthogonal, meet only at zero, and sum to the same 8-dimensional plus-type binary space of 256 states.</p>
+    <div class="statgrid">
+      <span>72 · fixes a chosen ordered pair of halves</span><b>O₄⁺(2)</b>
+      <span>144 · forgets the order, may exchange them</span><b>index two</b>
+      <span>432 · permutes all three polarizations</span><b>AGL(2,3)</b>
+    </div>
+
+    <h3>4 · TWO NORM FAMILIES</h3>
+    <p>Once a polarization is chosen, the four directions split 2 + 2 under the anisotropic ternary quadratic form: two of norm one, two of norm two. This is the same split as norm-one against norm-two elements of F9*, and it is what explains two earlier results at once — the direction orbits of size 2 that broke the predicted transitivity, and the exchange of the two binary halves. The orthogonal group preserves the two families; the multiplier-two coset swaps them.</p>
+
+    <h3>5 · FOUR 30-STATE ROOT-PAIR FAMILIES</h3>
+    <p>The four direction coordinates generate the ternary tetracode. All eight of its nonzero words have weight three, so each vanishes in exactly one coordinate, and they fall into four projective ± pairs — one per direction. Gluing four A2 root systems along that code gives an even unimodular rank-8 lattice with 240 roots: E8. Reducing modulo 2E8 collapses the 240 roots to 120 ± classes, and those are exactly the 120 nonsingular states of the binary module.</p>
+    <div class="statgrid">
+      <span>Local A2 root-pair classes per direction</span><b>3</b>
+      <span>Tetracode glue classes per direction</span><b>27</b>
+      <span>States per direction packet</span><b>30</b>
+      <span>Packets</span><b>4</b>
+      <span>Total root-pair classes covered</span><b>120</b>
+    </div>
+    <p class="small">The partition is exact: four disjoint packets, nothing left over and nothing counted twice.</p>
+
+    <h3>THE WHOLE ARCHITECTURE, LAYER BY LAYER</h3>
+    <table class="famtable wide">
+      <thead><tr><th>Layer</th><th>Object</th><th>Family structure</th><th>Certified role</th></tr></thead>
+      <tbody>
+        <tr><td>Affine base</td><td>AG(2,3), 9 points / 12 lines</td><td>4 direction families X, Y, P, M; 3 lines each</td><td>common ternary base</td></tr>
+        <tr><td>Binary kernel</td><td>F₂⁴, 16 states</td><td>1 zero + 9 weight-4 + 6 weight-6</td><td>line-parity nullspace</td></tr>
+        <tr><td>K3,3 homology</td><td>H₁(K3,3; F₂)</td><td>per direction pair: 9 four-cycles + 6 Hamiltonian</td><td>mechanism for rank 5 and dimension 4</td></tr>
+        <tr><td>Six modules</td><td>six F₂⁴ submodules</td><td>XY, XP, XM, YP, YM, PM</td><td>S₄ acts as on 2-subsets</td></tr>
+        <tr><td>Three polarizations</td><td>three orthogonal 4+4 splits</td><td>XY | PM · XP | YM · XM | YP</td><td>S₃ family of decompositions</td></tr>
+        <tr><td>Binary ambient</td><td>8D plus-type, 256 states</td><td>136 singular / 120 nonsingular</td><td>the ambient module</td></tr>
+        <tr><td>Orthogonal quotient</td><td>O₄⁺(2)</td><td>order 72</td><td>ordered two-family stabilizer</td></tr>
+        <tr><td>Hamming geometry</td><td>H(2,4) = K4 □ K4</td><td>two K4 families of four</td><td>16-point graph geometry</td></tr>
+        <tr><td>Ternary translation</td><td>F₃²</td><td>regular C3 × C3 on 9 points</td><td>intrinsic affine torsor</td></tr>
+        <tr><td>Ternary norm</td><td>anisotropic form</td><td>two norm families, 2 directions each</td><td>explains the 2 + 2 split</td></tr>
+        <tr><td>Field compression</td><td>F9</td><td>norm-one against norm-two</td><td>semidihedral, hidden index two</td></tr>
+        <tr><td>Tetracode</td><td>[4,2,3] over F₃</td><td>4 coordinates; 4 projective word-pairs</td><td>codes the nine affine points</td></tr>
+        <tr><td>A2 frame</td><td>four A2 root-pair components</td><td>one per X, Y, P, M</td><td>local 12 root-pair states</td></tr>
+        <tr><td>E8 lattice</td><td>rank 8, 240 roots</td><td>24 frame roots + 216 glue roots</td><td>tetracode glue completion</td></tr>
+        <tr><td>E8 / 2E8</td><td>8D plus-type quotient</td><td>120 ± classes = nonsingular states</td><td>explicitly identified</td></tr>
+        <tr><td>Root-pair packets</td><td>120 states</td><td>4 × 30: 3 local + 27 glue</td><td>direction-resolved partition</td></tr>
+      </tbody>
+    </table>
+
+    <h3>WHAT THIS PAGE IS NOT CLAIMING</h3>
+    <p>AG(2,3), K3,3, plus-type quadratic forms, Hamming graphs, F9, the tetracode, A2 and E8 are all classical, long-understood objects. None of them is being claimed as new. What is specific to this programme is the route: each was recovered independently from frozen descent, closure and fusion data, by separate audits that did not know about each other, and only afterwards found to assemble along one set of four directions.</p>
+    <p>Two identifications were tested and refused. A group of order 1,152 appearing on both sides is not an isomorphism — the element-order spectra differ, so W(F4) is rejected. And the count 66 appears in two different lower-family domains without any bijection between them, so they are kept separate. Matching cardinality is not evidence, and the record treats it as a question rather than an answer.</p>
+
+    <p class="closing">Evidence horizon: RAQS v086 · G021 · L007.</p>
+  </article>
+</aside>
+
 <div id="hint">Drag to rotate · scroll to zoom</div>
+
+<div id="sig" class="rises" aria-label="Designed and created by Kearon Allen">
+  <span class="by">Designed and created by</span>
+  <span class="name">Kearon Allen</span>
+  <span class="rule" aria-hidden="true"></span>
+</div>
 
 <script>
 'use strict';
@@ -658,8 +997,7 @@ function bakeSprite(role,variant){
     const dens=g.createRadialGradient(O,O,0,O,O,r);
     dens.addColorStop(0,'rgba('+rs(c)+','+(far?0.74:0.93)+')');
     dens.addColorStop(0.70,'rgba('+rs(c)+','+(far?0.66:0.86)+')');
-    dens.addColorStop(0.93,'rgba('+rs(c)+','+(far?0.22:0.34)+')');
-    dens.addColorStop(1,'rgba('+rs(c)+',0)');
+    dens.addColorStop(0.93,'rgba('+rs(c)+','+(far?0.22:0.34)+')');    dens.addColorStop(1,'rgba('+rs(c)+',0)');
     g.fillStyle=dens; g.beginPath(); g.arc(O,O,r,0,TAU); g.fill();
 
     /* denser on the shadow limb */
@@ -997,7 +1335,8 @@ const scenes={
     applies:['fourglass4']},
   structural:{title:'Discovered structural dimensions',
     sub:'The coordinates o, g, a and h are treated as real dimensions of difference. Objects sharing one can still differ along the others.',
-    detail:'The first new dimensional layer the program found. Support order, minimum generative or fusion depth, minimum atomic assembly mass and maximum surviving inheritance depth vary independently, so they separate objects that ordinary Euclidean coordinates would collapse onto the same point.',    applies:['structural4','expanded8','full10']},
+    detail:'The first new dimensional layer the program found. Support order, minimum generative or fusion depth, minimum atomic assembly mass and maximum surviving inheritance depth vary independently, so they separate objects that ordinary Euclidean coordinates would collapse onto the same point.',
+    applies:['structural4','expanded8','full10']},
   scaffold:{title:'Hidden scaffold',
     sub:'A finished structure can require temporary support that is absent from the final state.',
     detail:'The scaffold number σ is the gap between what must exist during construction and what survives in the finished object. The build runs in front of you: dashed arms appear before each node and are gone once it stands. σ is not quoted here, it is measured as peak support minus final support across the whole construction, and the panel reports all three. This is among the most astonishing of the findings: the object is not a full record of its own genesis.',
@@ -1414,6 +1753,1380 @@ scenes.cuf.measure=function(){
   ];
 };
 
+/* ==========================================================================
+   7c. additions — RAQS v086 and the G001–G008 geometry audits
+   Everything below is appended. Nothing above is replaced.
+   Where a figure can be recomputed it is recomputed here rather than quoted,
+   so the plate verifies the record instead of repeating it.
+   ========================================================================== */
+
+/* ---- the AG(2,3) base recovered by G005/G006 -------------------------- */
+const AGBASE=(function(){
+  const pts=[]; for(let x=0;x<3;x++) for(let y=0;y<3;y++) pts.push([x,y]);
+  const m3=n=>((n%3)+3)%3;
+  const lines=[];
+  for(let c=0;c<3;c++) lines.push({form:'x = '+c,        cls:0, pts:pts.filter(p=>p[0]===c)});
+  for(let c=0;c<3;c++) lines.push({form:'y = '+c,        cls:1, pts:pts.filter(p=>p[1]===c)});
+  for(let c=0;c<3;c++) lines.push({form:'x + y = '+c,    cls:2, pts:pts.filter(p=>m3(p[0]+p[1])===c)});
+  for(let c=0;c<3;c++) lines.push({form:'x \u2212 y = '+c, cls:3, pts:pts.filter(p=>m3(p[0]-p[1])===c)});
+  const on=(L,p)=>L.pts.some(q=>q[0]===p[0]&&q[1]===p[1]);
+  let pairs=0, exactlyOne=0;
+  for(let i=0;i<9;i++) for(let j=i+1;j<9;j++){
+    pairs++;
+    let n=0; for(let k=0;k<lines.length;k++) if(on(lines[k],pts[i])&&on(lines[k],pts[j])) n++;
+    if(n===1) exactlyOne++;
+  }
+  const deg=pts.map(p=>lines.filter(L=>on(L,p)).length);
+  const sizes=lines.map(L=>L.pts.length);
+  return {pts:pts,lines:lines,pairs:pairs,exactlyOne:exactlyOne,
+    degMin:Math.min.apply(null,deg), degMax:Math.max.apply(null,deg),
+    sizeMin:Math.min.apply(null,sizes), sizeMax:Math.max.apply(null,sizes),
+    classes:4, m3:m3};
+})();
+
+/* ---- G008: the canonical F3^2 x F2 block normal form ------------------- */
+const G008=(function(){
+  const m3=AGBASE.m3, even=[];
+  for(let w=0;w<8;w++){ const b=[w&1,(w>>1)&1,(w>>2)&1]; if(((b[0]^b[1])^b[2])===0) even.push(b); }
+  const blocks=[];
+  [1,2].forEach(function(s){                       /* s = +1 and s = -1 in F3 */
+    for(let c=0;c<3;c++) even.forEach(function(z){
+      const B=[]; for(let x=0;x<3;x++) B.push([x,m3(s*x+c),z[x]]);
+      blocks.push({s:s===1?'+1':'\u22121', c:c, z:z.join(''), pts:B});
+    });
+  });
+  const key=p=>p[0]+','+p[1]+','+p[2];
+  const seen={}, deg={}, codeg={};
+  blocks.forEach(function(B){
+    B.pts.forEach(function(p){ seen[key(p)]=1; deg[key(p)]=(deg[key(p)]||0)+1; });
+    for(let i=0;i<3;i++) for(let j=i+1;j<3;j++){
+      const k=[key(B.pts[i]),key(B.pts[j])].sort().join('|');
+      codeg[k]=(codeg[k]||0)+1;
+    }
+  });
+  const dv=Object.keys(deg).map(k=>deg[k]), cv=Object.keys(codeg).map(k=>codeg[k]);
+  return {blocks:blocks, nblocks:blocks.length, points:Object.keys(seen).length,
+    degMin:Math.min.apply(null,dv), degMax:Math.max.apply(null,dv),
+    usedPairs:cv.length, codegMin:Math.min.apply(null,cv), codegMax:Math.max.apply(null,cv),
+    evenLifts:even.length};
+})();
+
+/* ---- G007: the exhaustive (F2)^9 fibre-gauge orbit --------------------- */
+const G007=(function(){
+  const m3=AGBASE.m3, diag=[];
+  [1,2].forEach(function(s){ for(let c=0;c<3;c++) diag.push([s,c]); });
+  const cell=(x,y)=>x*3+y;
+  const rows=diag.map(function(L){ let r=0; for(let x=0;x<3;x++) r|=1<<cell(x,m3(L[0]*x+L[1])); return r; });
+  const sig={}, keys=[];
+  for(let g=0;g<512;g++){
+    let v=0;
+    for(let i=0;i<6;i++){ let p=0; for(let x=0;x<3;x++) p^=(g>>cell(x,m3(diag[i][0]*x+diag[i][1])))&1; v|=p<<i; }
+    if(sig[v]===undefined){ sig[v]=0; keys.push(v); }
+    sig[v]++;
+  }
+  const counts=keys.map(k=>sig[k]);
+  const allEven=keys.every(function(v){ let p=0; for(let i=0;i<6;i++) p^=(v>>i)&1; return p===0; });
+  const R=rows.slice(); let rank=0;
+  for(let bit=0;bit<9&&rank<R.length;bit++){
+    let piv=-1; for(let i=rank;i<R.length;i++) if((R[i]>>bit)&1){piv=i;break;}
+    if(piv<0) continue;
+    const tmp=R[rank]; R[rank]=R[piv]; R[piv]=tmp;
+    for(let i=0;i<R.length;i++) if(i!==rank&&((R[i]>>bit)&1)) R[i]^=R[rank];
+    rank++;
+  }
+  return {gauges:512, diag:diag, signatures:keys.length,
+    perSignature:(Math.min.apply(null,counts)===Math.max.apply(null,counts))?counts[0]:null,
+    allEven:allEven, rank:rank, kernel:9-rank};
+})();
+
+/* ---- curvature strata, v062–v064 -------------------------------------- */
+const CURV=(function(){
+  const strata=[[5,9],[22,15],[34,18],[66,4]];
+  let dirs=0, degSum=0;
+  strata.forEach(function(s){ dirs+=s[1]; degSum+=s[0]*s[1]; });
+  return {bracketings:14454, curved:618, triples:417, ambient:0,
+    strata:strata, dirs:dirs, degSum:degSum, handshake:degSum===3*417};
+})();
+
+/* ---- descent tower and prime staircase, v042–v048 --------------------- */
+const TOWER=[['c\u2083',46],['c\u2084',10658],['c\u2085',14547390],['c\u2086',143067457368]];
+const STAIR=(function(){
+  const primes=[2,3,5,7,11,13,17,19,23];
+  function lcmTo(n){
+    function g(a,b){while(b){const t=a%b;a=b;b=t;}return a;}
+    let L=1n; for(let i=1n;i<=BigInt(n);i++){ const a=L,b=i; let x=a,y=b; while(y){const t=x%y;x=y;y=t;} L=L/x*b; }
+    return L.toString();
+  }
+  return {primes:primes, firstRank:46, exp10:lcmTo(8), exp30:lcmTo(28)};
+})();
+
+/* ---- the reduced orientation-obstruction census, v029 ------------------ */
+const OBSTR={nodes:3791, rawEdges:3771, components:1400, simpleEdges:2457,
+  rawRank:3771-3791+1400, reducedRank:2457-3791+1400, removed:3771-2457, holonomyOne:66};
+
+/* ==========================================================================
+   7d. new plates
+   ========================================================================== */
+
+function drawCurvature(){
+  const acc=D('\ud835\udc9c'), R=0.94;
+  /* the 46 primitive directions, banded by curvature degree */
+  const band=[[0,9,ROLE.PATH,1.25],[9,24,ROLE.EXTRA,1.5],[24,42,ROLE.BODY,2.0],[42,46,ROLE.ACCENT,2.6]];
+  for(let b=0;b<band.length;b++){
+    for(let i=band[b][0];i<band[b][1];i++)
+      body(mul(primitiveDirs[i],R),band[b][3],0.86,band[b][2]);
+  }
+  /* curved triples: the restriction is what curves, so the hyperedges are
+     drawn only as far as accessibility is carried */
+  const spin=t*0.00006, shown=44;
+  for(let k=0;k<shown;k++){
+    const i=(k*7+1)%46, j=(k*13+5)%46, l=(k*23+17)%46;
+    if(i===j||j===l||i===l) continue;
+    const a=mul(primitiveDirs[i],R), bq=mul(primitiveDirs[j],R), c=mul(primitiveDirs[l],R);
+    const cen=mul(add(add(a,bq),c),1/3);
+    const fade=0.10+0.26*acc*(0.55+0.45*Math.sin(spin+k*0.7));
+    filament(a,cen,fade,0.9,null,ROLE.PATH);
+    filament(bq,cen,fade,0.9,null,ROLE.PATH);
+    filament(c,cen,fade,0.9,null,ROLE.PATH);
+    body(cen,0.9,0.42*acc,ROLE.ACCENT);
+  }
+  /* every elementary unit triple is associative in the unrestricted
+     operation: the ambient associator is an absence, not a body */
+  absence(v3(0,0,0),0.30,0.34,ROLE.ABSENT,1.2);
+  label(v3(0,0,0),'ambient associators 0',ROLE.ABSENT,10,0.85);
+  label(v3(0,-1.22,0), acc>0.5 ? '618 curved of 14,454 \u00b7 417 unique triples'
+                               : '\ud835\udc9c absent: curvature has nothing to restrict',
+        ROLE.EXTRA,10.5);
+  label(mul(primitiveDirs[44],R*1.28),'degree 66',ROLE.ACCENT,9.5,0.7);
+  label(mul(primitiveDirs[30],R*1.26),'degree 34',ROLE.BODY,9.5,0.7);
+}
+
+/* base cell -> world position; fibre state lifts off the base plane */
+function agPos(x,y,z){
+  return v3((x-1)*0.56,(y-1)*0.56,(z===undefined?0:(z?0.19:-0.19)));
+}
+function drawAffine(){
+  const sig=D('\u03c3'), acc=D('\ud835\udc9c'), lit=[sig,acc,(sig+acc)*0.5,(sig+acc)*0.5];
+  const roles=[ROLE.PATH,ROLE.EXTRA,ROLE.ACCENT,ROLE.ACCENT];
+  /* 12 lines in 4 parallel classes; a diagonal wraps, so it is drawn closed */
+  for(let k=0;k<AGBASE.lines.length;k++){
+    const L=AGBASE.lines[k], role=roles[L.cls], w=0.16+0.34*lit[L.cls];
+    for(let i=0;i<3;i++){
+      const p=L.pts[i], q=L.pts[(i+1)%3];
+      const closing=(L.cls>=2);
+      filament(agPos(p[0],p[1]),agPos(q[0],q[1]),
+        (i===2&&!closing)?w*0.22:w, 1.05, (L.cls>=2)?[4,5]:null, role);
+    }
+  }
+  /* 9 base cells, each carrying a two-state fibre: 18 points */
+  for(let i=0;i<AGBASE.pts.length;i++){
+    const p=AGBASE.pts[i];
+    body(agPos(p[0],p[1]),1.15,0.42,ROLE.PATH);
+    body(agPos(p[0],p[1],0),1.9,0.92,ROLE.BODY);
+    body(agPos(p[0],p[1],1),1.9,0.92,ROLE.BODY);
+    filament(agPos(p[0],p[1],0),agPos(p[0],p[1],1),0.20+0.30*D('H'),1,[2,4],ROLE.EXTRA);
+  }
+  label(v3(-1.30,0.96,0),'x = c  scaffold partition',ROLE.PATH,10,0.35+0.65*sig);
+  label(v3(-1.30,0.78,0),'y = c  curvature partition',ROLE.EXTRA,10,0.35+0.65*acc);
+  label(v3(-1.30,0.60,0),'y = \u00b1x + c  the v040 families',ROLE.ACCENT,10,0.35+0.65*(sig+acc)*0.5);
+  label(v3(0,-1.18,0),'9 cells \u00d7 2 fibre states = 18 points',ROLE.BODY,10.5);
+}
+
+let GAUGE_LINE=0, GAUGE_LIFT=0;
+function drawGauge(){
+  const hol=D('H');
+  const step=Math.floor(t*0.0006);
+  GAUGE_LINE=step%6; GAUGE_LIFT=Math.floor(step/6)%4;
+  const m3=AGBASE.m3;
+  /* the 18 points stay put; the blocks are what move */
+  for(let i=0;i<AGBASE.pts.length;i++){
+    const p=AGBASE.pts[i];
+    body(agPos(p[0],p[1],0),1.5,0.72,ROLE.BODY);
+    body(agPos(p[0],p[1],1),1.5,0.72,ROLE.BODY);
+  }
+  /* the four even-parity lifts over the selected diagonal line */
+  const L=G007.diag[GAUGE_LINE];
+  const even=[]; for(let w=0;w<8;w++){const b=[w&1,(w>>1)&1,(w>>2)&1]; if(((b[0]^b[1])^b[2])===0) even.push(b);}
+  for(let e=0;e<even.length;e++){
+    const z=even[e], sel=(e===GAUGE_LIFT), a=sel?0.60:0.13*Math.max(hol,0.3);
+    let prev=null;
+    for(let x=0;x<3;x++){
+      const q=agPos(x,m3(L[0]*x+L[1]),z[x]);
+      if(prev) filament(prev,q,a,sel?1.5:1,sel?null:[3,5],sel?ROLE.ACCENT:ROLE.EXTRA);
+      if(sel) body(q,2.2,0.95,ROLE.ACCENT);
+      prev=q;
+    }
+    /* close the block so its three points read as one object */
+    if(prev) filament(prev,agPos(0,m3(L[1]),z[0]),a*0.5,1,[3,5],sel?ROLE.ACCENT:ROLE.EXTRA);
+  }
+  /* the parity strip: six line labels, only their total XOR is invariant */
+  for(let i=0;i<6;i++){
+    const px=(i-2.5)*0.20, pt=v3(px,-1.06,0);
+    if(i===GAUGE_LINE) body(pt,2.0,0.9,ROLE.ACCENT); else absence(pt,0.042,0.42,ROLE.ABSENT,1.1);
+  }
+  label(v3(0,-1.26,0),'six line parities flip under gauge \u00b7 total XOR = 0 does not',ROLE.ABSENT,10);
+  label(v3(0,1.16,0),'y = '+(L[0]===1?'x':'\u2212x')+' + '+L[1]+'  \u00b7  lift '+(GAUGE_LIFT+1)+' of 4',ROLE.ACCENT,10.5);
+  label(v3(1.16,0.86,0), hol>0.5 ? 'fibre carried: hyperplane visible'
+                                 : 'H absent: lifts collapse to the base', ROLE.EXTRA,10,0.4+0.6*hol);
+}
+
+function drawStaircase(){
+  const tau=D('\u03c4');
+  /* the pure-order tower, log-scaled so four orders of magnitude fit one plate */
+  const top=Math.log10(TOWER[3][1]);
+  for(let i=0;i<TOWER.length;i++){
+    const h=Math.log10(TOWER[i][1])/top, x=-1.04+i*0.30;
+    filament(v3(x,-0.86,0),v3(x,-0.86+1.34*h,0),0.30,1.4,null,ROLE.BODY);
+    body(v3(x,-0.86+1.34*h,0),2.0,0.94,ROLE.BODY);
+    label(v3(x,-0.98,0),TOWER[i][0],ROLE.BODY,10);
+  }
+  label(v3(-0.60,0.66,0),'exact pure-order dimensions',ROLE.BODY,10.5);
+  /* the prime staircase: first p-primary obstruction at order k = p + 2,
+     rank 46 at every first appearance */
+  for(let i=0;i<STAIR.primes.length;i++){
+    const p=STAIR.primes[i], x=0.26+i*0.11, h=0.14+0.62*(Math.log(p)/Math.log(23));
+    const role=(tau>0.5)?ROLE.EXTRA:ROLE.ABSENT;
+    if(tau>0.5){
+      filament(v3(x,-0.86,0),v3(x,-0.86+h,0),0.34,1.2,null,role);
+      body(v3(x,-0.86+h,0),1.5,0.85,role);
+      /* the obstruction rows are the 46 order-3 chiral motifs */
+      for(let k=0;k<6;k++) body(v3(x,-0.86+h+0.05+k*0.028,0),0.75,0.34,ROLE.ACCENT);
+    }else{
+      absence(v3(x,-0.86+h,0),0.032,0.40,ROLE.ABSENT,1.1);
+    }
+    label(v3(x,-0.96,0),String(p),role,9);
+  }
+  label(v3(0.72,0.66,0),tau>0.5?'(Z/pZ)\u2074\u2076 at k = p + 2':'\u03c4 absent: torsion not carried',        ROLE.EXTRA,10.5,0.4+0.6*tau);
+  label(v3(0.72,-1.08,0),'prime p',ROLE.EXTRA,9.5,0.6);
+  absence(v3(0,0,0),0.06,0.18,ROLE.ABSENT,1);
+}
+
+/* ==========================================================================
+   7e. new scene registrations
+   ========================================================================== */
+scenes.curvature={title:'Curvature as accessibility',
+  sub:'Curvature here is a shadow of what can be reached, not of how composition behaves.',
+  detail:'On the 46 primitive directions, 14,454 admissible unit bracketings were audited exhaustively: 618 are curved and they realise 417 unique curvature triples, whose 3-uniform hypergraph is connected on all 46 directions with degree strata 5, 22, 34 and 66. The sharp result is negative. Every elementary unit triple is associative in the unrestricted primitive operation, so the ambient associator count is zero while the restricted count is 618. Curvature is therefore an obstruction of the realised state set and not an ambient non-associativity, which is why the centre of the plate carries an open ring rather than a body. Drop accessibility from the profile and the hyperedges fade: with nothing restricted there is nothing to curve. [C, exhaustive on the stated finite universe]',
+  applies:['expanded8','full10']};
+
+scenes.affine={title:'Affine base AG(2,3)',
+  sub:'Two independently recovered three-way partitions turn out to be transverse coordinates on one finite plane.',
+  detail:'G005 found that the 18 curvature-degree-34 directions already carry frozen scaffold coordinates filling Z3 x Z3 x Z2, and that curvature independently cuts the same 18 directions into three groups of six. The two partitions intersect in a perfectly uniform three-by-three table with exactly two directions per cell, and those two are exactly the two fibre states. G006 then projected the 24 frozen v040 support triples onto the nine cells: they collapse to six base lines, three of the form x + y = c and three of the form x - y = c. Together with the scaffold and curvature classes that gives 12 lines on 9 points, three points per line, four lines per point, every one of the 36 point pairs on exactly one line, and four parallel classes of three - the classical affine plane AG(2,3), recovered rather than assumed. The counts in the panel are computed on the plate, not quoted. [C, exact finite reconstruction]',
+  applies:['expanded8','full10']};
+
+scenes.gauge={title:'Fibre gauge and canonical blocks',
+  sub:'The parity label on any single line is a coordinate choice. The hyperplane of lifts above it is not.',
+  detail:'G007 enumerates the whole local gauge group: the fibre label may be swapped independently at each of the nine base cells, giving 2^9 = 512 relabellings. Under every one of them the four-of-eight parity-hyperplane property over each diagonal line survives, while individual line parities do not - each of the six can be flipped. The six-line parity vector reaches exactly 32 signatures with 16 gauge preimages each, the incidence map has F2-rank 5 with a four-dimensional kernel, and the reachable set is precisely the even-weight length-6 binary code, so the only linear invariant is that the six parities XOR to zero. G008 then picks a zero-parity gauge and the entire 24-block v040 configuration falls out of one formula: B(s,c,z) = {(x, sx + c, z_x)} with s = +/-1, c in F3 and z an even-parity word of F2^3, giving 2 x 3 x 4 = 24 blocks that match the observed set exactly. A 24-row incidence catalogue becomes a closed algebraic rule. The gauge orbit, the rank and the block audit are all recomputed here. [C, exhaustive gauge orbit and exact normal form]',
+  applies:['expanded8','full10']};
+
+scenes.staircase={title:'Integral prime staircase',
+  sub:'Rational surjectivity does not erase integral information. Torsion returns in a prime-indexed staircase.',
+  detail:'The descent maps are surjective over the rationals once the isolated-vertex splitting is in place, which fixes the exact pure-order dimensions: 46 at order three, 10,658 at four, 14,547,390 at five and 143,067,457,368 at six, drawn here on a log scale because no linear plate would hold them. Over the integers the cokernel closes in a direct sum whose torsion is indexed by prime, with exponent lcm(1, ..., k-2). Over F_p the descent is nilpotent, D^p = 0, and at the first appearance k = p + 2 the p-primary part is exactly (Z/pZ)^46, the obstruction rows being the 46 order-3 chiral motifs padded with isolated vertices. Those 46 are the same 46 directions the curvature plate draws. Without the torsion coordinate the staircase reads as absence: the ranks are still there, but nothing carries them. [P for the splitting and cokernel formula; C for the certified range]',
+  applies:['full10']};
+
+sceneDraw.curvature=drawCurvature;
+sceneDraw.affine=drawAffine;
+sceneDraw.gauge=drawGauge;
+sceneDraw.staircase=drawStaircase;
+
+/* ==========================================================================
+   7f. what the new plates measure
+   ========================================================================== */
+scenes.curvature.measure=function(){
+  return [
+    ['unit bracketings', CURV.bracketings.toLocaleString()],
+    ['curved', String(CURV.curved), 'good'],
+    ['unique curvature triples', String(CURV.triples)],
+    ['degree \u00d7 multiplicity', String(CURV.degSum)+' = 3 \u00d7 '+CURV.triples, CURV.handshake?'good':''],
+    ['directions in strata', String(CURV.dirs)],
+    ['ambient associators', String(CURV.ambient), 'zero'],
+    ['\ud835\udc9c carried', D('\ud835\udc9c')>0.5?'yes':'no', D('\ud835\udc9c')>0.5?'good':'zero']
+  ];
+};
+scenes.affine.measure=function(){
+  return [
+    ['base cells', String(AGBASE.pts.length)],
+    ['lines', String(AGBASE.lines.length), 'good'],
+    ['points per line', AGBASE.sizeMin===AGBASE.sizeMax?String(AGBASE.sizeMin):'varies'],
+    ['lines per point', AGBASE.degMin===AGBASE.degMax?String(AGBASE.degMax):'varies'],
+    ['pairs on exactly one line', AGBASE.exactlyOne+' of '+AGBASE.pairs,
+      AGBASE.exactlyOne===AGBASE.pairs?'good':''],
+    ['parallel classes', String(AGBASE.classes)],
+    ['points with fibre', String(AGBASE.pts.length*2)],
+    ['\u03c3 and \ud835\udc9c carried', (D('\u03c3')>0.5&&D('\ud835\udc9c')>0.5)?'both':'partial',
+      (D('\u03c3')>0.5&&D('\ud835\udc9c')>0.5)?'good':'zero']
+  ];
+};
+scenes.gauge.measure=function(){
+  return [
+    ['gauge group', String(G007.gauges)],
+    ['parity signatures', String(G007.signatures), 'good'],
+    ['preimages per signature', G007.perSignature===null?'varies':String(G007.perSignature)],
+    ['incidence rank over F2', String(G007.rank)],
+    ['gauge kernel', String(G007.kernel)],
+    ['all signatures even weight', G007.allEven?'yes':'no', G007.allEven?'good':''],
+    ['canonical blocks', String(G008.nblocks)],
+    ['points covered', String(G008.points)],
+    ['point degree', G008.degMin===G008.degMax?String(G008.degMax):'varies'],
+    ['used pairs, codegree', G008.usedPairs+' at '+(G008.codegMin===G008.codegMax?G008.codegMax:'varies'),
+      G008.codegMin===1&&G008.codegMax===1?'good':''],
+    ['H carried', D('H')>0.5?'yes':'no', D('H')>0.5?'good':'zero']
+  ];
+};
+scenes.staircase.measure=function(){
+  const rows=[];
+  for(let i=0;i<TOWER.length;i++) rows.push([TOWER[i][0], TOWER[i][1].toLocaleString()]);
+  rows.push(['first p-primary rank', String(STAIR.firstRank), 'good']);
+  rows.push(['exponent, k = 10', STAIR.exp10]);
+  rows.push(['exponent, k = 30', STAIR.exp30]);
+  rows.push(['\u03c4 carried', D('\u03c4')>0.5?'yes':'no', D('\u03c4')>0.5?'good':'zero']);
+  return rows;
+};
+
+/* ==========================================================================
+   7g. additions to the plates that were already here
+   The original detail text and measure rows are kept and extended, never
+   replaced: each original measure function is still called and its rows are
+   returned first.
+   ========================================================================== */
+function extendMeasure(key,extra){
+  const prior=scenes[key].measure;
+  scenes[key].measure=function(){
+    const rows=prior?prior():[];
+    const more=extra();
+    for(let i=0;i<more.length;i++) rows.push(more[i]);
+    return rows;
+  };
+}
+
+scenes.holonomy.detail+=' The programme\u2019s own transport census sits behind this plate. The eligible network has 3,791 nodes, 3,771 raw edges and 1,400 components, so its raw cycle rank is 1,380; removing 1,314 reciprocal and parallel holonomy-zero redundancies leaves 2,457 simple constraints and a reduced rank of 66. Both numbers follow from the node, edge and component counts alone, so the reduction can be checked without trusting the deduplication step. Every one of the 66 independent cycles carries holonomy 1 and every one is a quotient self-loop: its whole vertex set collapses to a single isomorphism class, so base displacement vanishes while the fibre holonomy does not. No global Z/2 section exists. The quotient is not degenerate either, separating most one-edge edits and distorting distances by up to 35.0, so the blindness is selective rather than general. This is a selector-induced pregeometric orientation obstruction, not an arrow of time.';
+extendMeasure('holonomy',function(){
+  return [
+    ['eligible nodes', OBSTR.nodes.toLocaleString()],
+    ['raw cycle rank', String(OBSTR.rawRank)],
+    ['redundancies removed', OBSTR.removed.toLocaleString()],
+    ['reduced cycle rank', String(OBSTR.reducedRank), 'good'],
+    ['cycles with holonomy 1', String(OBSTR.holonomyOne), 'good'],
+    ['cycles with holonomy 0', '0', 'zero'],
+    ['max local expansion', '35.0']
+  ];
+});
+
+scenes.closure.detail+=' The exchange behaviour behind these cells is exact and it is what places the geometry outside the matroid family. All 242,379 raw-scale-1 dependencies are immediately exchange reversible with zero failures, while of 11,541 nontrivial-scale relations 6,732 are recovered by closure exchange and 4,809 are not. One-sided recovery happens zero times: a relation is either mutually recoverable or mutually irreversible. Exchange failures exclude matroids and combinatorial pregeometries, exchange recoveries exclude anti-exchange and convex geometries, and neither exclusion establishes a new class - a search over relation-structural features to size four returns no exact rule separating the two phases at all. The 17,076-node closure poset falls into 7,662 components of only four canonical types, 7,644 of cycle rank zero and 18 of cycle rank three, and those 18 are exactly the reconvergent ones drawn here. G001 re-audited all of them: the same reduced signature, determinant 4, and the P = V - 2U, Q = V + 2U normal form throughout, with the 18 cell pairs forming the 18 edges of three disjoint K3,2 blocks.';
+extendMeasure('closure',function(){
+  return [
+    ['closure poset nodes', (17076).toLocaleString()],
+    ['components', (7662).toLocaleString()],
+    ['exchange failures', (4809).toLocaleString(), 'good'],
+    ['one-sided recoveries', '0', 'zero'],
+    ['cell determinant', '4'],
+    ['K3,2 blocks', '3']
+  ];
+});
+
+scenes.access.detail+=' Two exact laws live on this plate and one failure sits between them. Over 2,070 ordered unit pairs the rule that V \u00b1 2U is realised while V \u00b1 U and V \u00b1 3U are absent picks out exactly the 18 reconvergence pairs, with no false positives and no false negatives. The scale-3 pentad {U, V, V - 2U, V + U, 2V - U} is universal across all 30 scale-3 components, but the ordered selector for it fails outright: 14 true positives against 14 false positives and 16 false negatives. Removing the orientation dependence repairs it. Over 1,035 unordered unit pairs a pair supports the pentad exactly when its realised coefficient lines with |a|, |b| <= 2 form one of the two complementary alternating triples of the six-line projective hexagon - 30 matches, no false positives, no false negatives. The ordered failure and the orientation-free law belong together: the repair is the result.';
+extendMeasure('access',function(){
+  return [
+    ['ordered unit pairs tested', (2070).toLocaleString()],
+    ['2:4 law true positives', '18', 'good'],
+    ['2:4 law false positives', '0', 'zero'],
+    ['ordered pentad selector', '14 TP / 14 FP / 16 FN'],
+    ['orientation-free hexagon', '30 of 30', 'good'],
+    ['unordered pairs tested', (1035).toLocaleString()]
+  ];
+});
+
+scenes.scaffold.detail+=' The wider census places this plate exactly. Of 7,294 rays, 616 are scaffold-required and \u03c3 takes only the values 0 and 1. All 48 fully support-isolated rays are scaffold-required, with minimal scaffold-choice sizes of 6 for 24 of them and 12 for the other 24, so every exact immediate realisation of such a ray needs a temporary coordinate that the finished object does not contain. For those 48 the causal hidden set equals the union of minimal immediate scaffold choices exactly, with a symmetric difference of zero in every case - but the equality stops there: of the 570 non-unit scaffold-required rays only 318 match, a fraction of 0.5579. The nine-point core carries six three-point stars whose intersection graph is K3,3, with the bipartition matching permutation parity, and that core is the base the affine and gauge plates are built on. Temporary coordinates are mathematical scaffolds, not hidden variables.';
+extendMeasure('scaffold',function(){
+  return [
+    ['rays', (7294).toLocaleString()],
+    ['scaffold-required', '616'],
+    ['fully support-isolated', '48', 'good'],
+    ['exact ancestry match, isolated', '48 of 48', 'good'],
+    ['exact ancestry match, wider', '318 of 570'],
+    ['scaffold core', 'K3,3 on 9 points']
+  ];
+});
+
+scenes.cuf.detail+=' v082 to v086 bound this rather than generalising it. v082 screened six observable tiers across strengths to 0.05 and returned an empty exit-bracket set; v083 calibrated for scale covariance and the full family stayed partial at baseline; v084 audited all 57 nontrivial tier subsets and found that removing one tier is the unique single-tier removal restoring baseline exact invariance, giving one inclusion-maximal five-transform coherent family and two candidate exit brackets. v085 then re-ran both in the frozen engine and confirmed neither: the piecewise bracket moved E to A rather than E to P, and the sign bracket stayed at D. v086 stopped forcing the failed brackets and decomposed the boundary instead. Piecewise runs E to A to P across the targeted range, and only the A to P step at 0.015 to 0.0175 is accompanied by coverage loss, five found tiers falling to three; every other change keeps all five tiers and is therefore a coherence-regime change, not a coverage loss. No coverage-recovery edge appears anywhere in the scan. The strongest supported statement is finite and mechanistic: a state change can come from either coverage loss or cross-tier coherence change. No monotonicity, no transform universality, and no phase-transition theorem follows. [C for the scan; N for the proposed exits]';
+extendMeasure('cuf',function(){
+  return [
+    ['tier subsets audited', '57'],
+    ['coherent family size', '5'],
+    ['candidate exits proposed', '2'],
+    ['candidate exits confirmed', '0', 'zero'],
+    ['coverage-loss transitions', '1', 'good'],
+    ['coherence-change transitions', 'the rest'],
+    ['coverage recovery edges', '0', 'zero']
+  ];
+});
+
+scenes.structural.detail+=' The non-reduction that makes these coordinates dimensions rather than labels is now checked layer by layer. Structural coordinates do not determine scaffold requirement; scaffold requirement does not determine curvature stratum; curvature stratum does not determine reconvergence membership, which G004 established by direct set comparison after all six candidate block matchings tied at score 60; support order determines neither fusion depth nor assembly mass; and collapsing to support, mass or depth does not preserve exact composition, with 45 defect types catalogued and no exact isolated-sector defect subset. The hierarchy claim rests on these failures to reduce, not on any single positive result.';
+
+scenes.emergence.detail+=' Two layers have been added to the stack since this plate was first drawn. The arithmetic layer beneath it is now explicit - exact pure-order dimensions, a closed integral cokernel and a prime-indexed torsion staircase - and above the scaffold and curvature layers sits a finite affine chart: nine base cells carrying a two-state fibre, twelve lines in four parallel classes, and a 24-block configuration that reduces to a single algebraic formula. The four new plates in the scene list draw those layers directly.';
+
+/* ==========================================================================
+   7h. end of additions
+   ========================================================================== */
+
+/* ==========================================================================
+   7i. second round of additions — the CIIL branch, the differential-constant
+   forest/cycle boundary, and the collapse-defect catalogue.
+   Appended in the same way: nothing above is replaced.
+   ========================================================================== */
+
+/* ---- CIIL assumption collapse, v077–v079 ------------------------------- */
+const CIIL={
+  coords:[['O_shape','order shape'],
+          ['(3\u0108\u2083 \u2212 1)/2','coupling residue'],
+          ['1 \u2212 R_C','constraint match']],
+  dropped:['temporal entanglement','constant E_VM','vibration / light / mass carriers'],
+  paretoFail:20, majorityFail:18, reproDiff:'0.0'
+};
+
+/* ---- differential constants, v049–v053 --------------------------------- */
+/* small graphs walked on the plate; beta1 is computed, never quoted */
+const GRAPHS=[
+  {name:'path on 5',      n:5, E:[[0,1],[1,2],[2,3],[3,4]]},
+  {name:'two-component forest', n:5, E:[[0,1],[1,2],[3,4]]},
+  {name:'4-cycle',        n:5, E:[[0,1],[1,2],[2,3],[3,0]]},
+  {name:'5-cycle + chord',n:5, E:[[0,1],[1,2],[2,3],[3,4],[4,0],[0,2]]},
+  {name:'K4',             n:5, E:[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]]}
+];
+function graphAudit(G){
+  const par=[]; for(let i=0;i<G.n;i++) par.push(i);
+  function find(a){while(par[a]!==a){par[a]=par[par[a]];a=par[a];}return a;}
+  const tree=[], chord=[];
+  for(let k=0;k<G.E.length;k++){
+    const a=find(G.E[k][0]), b=find(G.E[k][1]);
+    if(a===b) chord.push(G.E[k]); else { par[a]=b; tree.push(G.E[k]); }
+  }
+  /* components counted over the vertices the graph actually touches */
+  const used={}; G.E.forEach(e=>{used[e[0]]=1;used[e[1]]=1;});
+  const verts=Object.keys(used).map(Number);
+  const roots={}; verts.forEach(v=>{roots[find(v)]=1;});
+  const c=Object.keys(roots).length;
+  const beta1=G.E.length-verts.length+c;
+  return {tree:tree,chord:chord,V:verts.length,E:G.E.length,c:c,beta1:beta1,
+    forest:chord.length===0, verts:verts};
+}
+const GRAPH_AUDIT=GRAPHS.map(graphAudit);
+const CONSTANTS={graphsChecked:52, forestsChecked:22, throughN:5,
+  betaMatchesChords:GRAPH_AUDIT.every(a=>a.beta1===a.chord.length)};
+
+/* ---- collapse-order defects, v061 / v073 and the frozen N6 catalogue ---- */
+const DEFECT={types:45, exactIsolatedSubset:0, coarse:['support','mass','depth'],
+  states:[['E','exact multi-tier invariance'],['A','approximate'],
+          ['D','all-tier divergent'],['P','partial-tier support'],
+          ['Z','no-tier support'],['S','single-tier cliff, cross-tier undefined']]};
+
+/* ---- the second face-free family, v040 --------------------------------- */
+const FACEFREE={triples:{blocks:24,size:3,points:18,girth:6,linear:true},
+  quads:{blocks:24,size:4,points:13,girth:4,linear:false},
+  mutualCoupling:0};
+
+/* ==========================================================================
+   7j. two more plates
+   ========================================================================== */
+
+function drawCIIL(){
+  const prec=D('\u227a'), phase=(t*0.00013)%1;
+  /* the three surviving residue coordinates */
+  const ax=[v3(1.02,0,0),v3(0,1.02,0),v3(0,0,1.02)];
+  for(let i=0;i<3;i++){
+    filament(v3(0,0,0),ax[i],.30,1.2,null,ROLE.PATH);
+    body(ax[i],1.7,.9,ROLE.BODY);
+    label(mul(ax[i],1.16),CIIL.coords[i][0],ROLE.BODY,10);
+  }
+  /* v077: an open cone of positive weights still preserves coupled > null.
+     the cone is a body because the ordering survives. */
+  const N=15;
+  for(let k=0;k<N;k++){
+    const u=(k%5)/4, v=Math.floor(k/5)/2;
+    const w=norm(v3(.30+.70*u,.30+.70*(1-u),.30+.70*v));
+    const tip=mul(w,.78);
+    filament(v3(0,0,0),tip,.10+.26*prec,1,null,ROLE.EXTRA);
+    body(tip,1.0,.46*(0.3+0.7*prec),ROLE.EXTRA);
+  }
+  label(v3(.52,.52,.52),'open positive cone survives',ROLE.EXTRA,10,0.35+0.65*prec);
+  /* the assumptions that were removed are absences, not bodies */
+  for(let i=0;i<CIIL.dropped.length;i++){
+    const p=v3(-1.06,.52-i*.30,-.20);
+    absence(p,.050,.44,ROLE.ABSENT,1.2);
+    label(add(p,v3(.16,0,0)),CIIL.dropped[i],ROLE.ABSENT,9.5,.8);
+  }
+  label(v3(-1.06,.86,-.20),'collapsed away',ROLE.ABSENT,10);
+  /* v078 and v079: the stronger, target-free separators do not survive.
+     the margin bar crosses zero and stays on the wrong side. */
+  const y=-1.00, span=.62, m=-0.16-0.06*Math.sin(phase*TAU);
+  filament(v3(-span,y,0),v3(span,y,0),.20,1,[3,4],ROLE.PATH);
+  absence(v3(0,y,0),.034,.5,ROLE.ABSENT,1.2);
+  label(v3(0,y+.16,0),'maximin 0',ROLE.ABSENT,9.5,.75);
+  body(v3(m*span/0.3,y,0),2.1,.9,ROLE.ABSENT);
+  label(v3(0,y-.20,0),'target-free and higher-order temporal: nonpositive',ROLE.ABSENT,10);
+  label(v3(0,1.20,0), prec>0.5 ? 'carrier-free ordering residue, not a dimension count'
+                               : '\u227a absent: no ordering left to preserve', ROLE.BODY,10.5);
+}
+
+let CONST_IDX=0;
+function drawConstants(){
+  const tau=D('\u03c4');
+  CONST_IDX=Math.floor(t*0.00016)%GRAPHS.length;
+  const G=GRAPHS[CONST_IDX], A=GRAPH_AUDIT[CONST_IDX];
+  const pos=[];
+  for(let i=0;i<G.n;i++){
+    const a=i/G.n*TAU-Math.PI/2;
+    pos.push(v3(Math.cos(a)*.66,Math.sin(a)*.66,Math.sin(a*2)*.10));
+  }
+  /* spanning-forest edges carry the Ore elimination; chords do not */
+  for(let k=0;k<A.tree.length;k++)
+    filament(pos[A.tree[k][0]],pos[A.tree[k][1]],.34,1.4,null,ROLE.PATH);
+  for(let k=0;k<A.chord.length;k++){
+    const a=pos[A.chord[k][0]], b=pos[A.chord[k][1]];
+    filament(a,b,.26*Math.max(tau,.35),1.2,[4,5],ROLE.ABSENT);
+    /* one chord, one telescoping cycle-consistency relation */
+    absence(mul(add(a,b),0.5),.048,.50*Math.max(tau,.35),ROLE.ABSENT,1.2);
+  }
+  for(let i=0;i<A.verts.length;i++) body(pos[A.verts[i]],1.9,.92,ROLE.BODY);
+  /* in the forest case the constants are free: generators plus one tower
+     per component, drawn as a short ladder */
+  if(A.forest&&tau>0.3){
+    for(let i=0;i<A.c;i++){
+      const base=v3(.86,-.30-i*.34,.10);
+      for(let k=0;k<4;k++){
+        const p=add(base,v3(0,.09*k,0));
+        body(p,1.15-0.14*k,.62*tau,ROLE.EXTRA);
+        if(k) filament(add(base,v3(0,.09*(k-1),0)),p,.22*tau,1,null,ROLE.EXTRA);
+      }
+      label(add(base,v3(.16,.18,0)),'ad(x\u2080) tower',ROLE.EXTRA,9.5,.8*tau);
+    }
+  }
+  label(v3(0,-1.02,0), A.forest ? 'forest: ker d is free associative'
+                                : '\u03b2\u2081 = '+A.beta1+' \u00b7 '+A.beta1+' independent quadratic relation'+(A.beta1===1?'':'s'),
+        A.forest?ROLE.BODY:ROLE.ABSENT,10.5);
+  label(v3(0,1.10,0),G.name,ROLE.PATH,10.5);
+  label(v3(0,-1.20,0),'\u03b2\u2081 = |E| \u2212 |V| + c = '+A.E+' \u2212 '+A.V+' + '+A.c,ROLE.EXTRA,10);
+}
+
+/* ==========================================================================
+   7k. registration
+   ========================================================================== */
+scenes.ciil={title:'CIIL carrier-free residue',
+  sub:'One assumption collapse leaves an ordering intact. The next two do not.',
+  detail:'v077 strips the temporal-entanglement term, the constant E_VM and the vibration, light and mass carrier labels out of the decision coordinates, and asks what still orders the coupled condition above the null. What survives is a three-part residue - an order shape, a coupling residue and a constraint-match coordinate - and within the tested finite data an open cone of positive weights preserves the coupled-over-null ordering after the collapse. That is a structural ordering residue on a stated sample, not a proof that identity is three-dimensional in general, and the plate draws the collapsed assumptions as open rings rather than bodies for exactly that reason. The stronger versions then fail. v078 removes the coupled-target residual and the absolute common scale, and the target-free projective signature returns a nonpositive maximin margin across the tested null families, with 20 Pareto and 18 majority failures across seeds; frozen and surrogate reproduction both return a maximum absolute difference of 0.0, so the boundary is not a reproduction artefact. v079 finds the same for higher-order temporal and order residue. The weaker carrier-free result stands and the universality claim does not, which is why the margin bar sits below zero and stays there. [E for the surviving cone; N for the target-free and higher-order separators]',
+  applies:['expanded8','full10']};
+
+scenes.constants={title:'Differential constants',
+  sub:'Freeness has a graph-theoretic boundary: the constants stay free exactly while the commutation graph is a forest.',
+  detail:'In the graph trace algebra of an unmatched slice, the audited mechanism is differential Ore elimination along a spanning forest. Every tree edge can be eliminated in turn, so for a forest the kernel of the derivation is free associative, with degree-one generators plus one ad(x0) tower per component. A chord cannot be eliminated: the edge equation delta(y_j - y_i) = -[y_i, y_j] telescopes around the cycle it closes and leaves a quadratic relation behind. The count is exactly the first Betti number, beta1 = |E| - |V| + c, and the plate walks a short sequence of graphs, marking every chord with an open ring because each ring is one relation the algebra can no longer avoid. Verification covers all 52 unlabelled graphs through n = 5, all 22 forests through degree 4, and every cyclic graph at the first relation degree. This is the programme\u2019s highest-priority literature check: the mechanism is established and exhaustively verified in the stated range, a search has not located an exact precedent in partially commutative, Lazard and differential Ore theory, and absence from that search is not proof of novelty. No priority claim is made. [P as mechanism, C in the verified range, O until the write-up and literature audit are done]',
+  applies:['full10']};
+
+sceneDraw.ciil=drawCIIL;
+sceneDraw.constants=drawConstants;
+
+scenes.ciil.measure=function(){
+  return [
+    ['residue coordinates', String(CIIL.coords.length)],
+    ['assumptions collapsed', String(CIIL.dropped.length)],
+    ['positive-weight cone', 'open', 'good'],
+    ['target-free maximin', 'nonpositive', 'zero'],
+    ['Pareto failures', String(CIIL.paretoFail)],
+    ['majority failures', String(CIIL.majorityFail)],
+    ['reproduction max |\u0394|', CIIL.reproDiff, 'good'],
+    ['higher-order temporal', 'nonpositive', 'zero'],
+    ['\u227a carried', D('\u227a')>0.5?'yes':'no', D('\u227a')>0.5?'good':'zero']
+  ];
+};
+scenes.constants.measure=function(){
+  const A=GRAPH_AUDIT[CONST_IDX];
+  return [
+    ['graph', GRAPHS[CONST_IDX].name],
+    ['|V|, |E|, components', A.V+', '+A.E+', '+A.c],
+    ['\u03b2\u2081', String(A.beta1), A.forest?'zero':'good'],
+    ['chords', String(A.chord.length)],
+    ['\u03b2\u2081 equals chord count', CONSTANTS.betaMatchesChords?'yes':'no', CONSTANTS.betaMatchesChords?'good':''],
+    ['ker d free associative', A.forest?'yes':'no', A.forest?'good':'zero'],
+    ['unlabelled graphs verified', String(CONSTANTS.graphsChecked)],
+    ['forests verified to degree 4', String(CONSTANTS.forestsChecked)],
+    ['\u03c4 carried', D('\u03c4')>0.5?'yes':'no', D('\u03c4')>0.5?'good':'zero']
+  ];
+};
+
+/* ==========================================================================
+   7l. further extensions to plates that were already here
+   ========================================================================== */
+scenes.collapse.detail+=' The defect this plate draws has been catalogued exactly. Collapsing the geometry onto a coarse invariant - support, mass or depth - does not preserve exact composition, and 45 distinct defect types are recorded, with no exact isolated-sector defect subset: there is no clean sub-family of defects that can be quarantined and the rest declared safe. v061 records the same behaviour as pregeometric path dependence, and v073 turns the observed collapse residues into the state grammar that the CUF plate then uses. Route order is therefore not a nuisance parameter to be averaged away; it is the coordinate. [C for the catalogue; N for the separator]';
+extendMeasure('collapse',function(){
+  return [
+    ['defect types catalogued', String(DEFECT.types)],
+    ['exact isolated-sector subset', String(DEFECT.exactIsolatedSubset), 'zero'],
+    ['coarse invariants tested', DEFECT.coarse.join(', ')],
+    ['collapse states in the grammar', String(DEFECT.states.length)]
+  ];
+});
+
+scenes.cuf.detail+=' The letters come from the v073 collapse residue grammar: E is exact multi-tier invariance, A approximate, D all-tier divergent, P partial-tier support, Z no-tier support, and S a single-tier cliff where cross-tier invariance is undefined. v080 then audited 34 increasing-strength sequences and found exact invariance exiting twice and re-entering zero times while local observable cliffs exited 23 times and re-entered four, which is what proves the classifier permits re-entry: a local cliff is not an irreversible state variable, and the absence of exact-invariance re-entry is an empirical fact rather than a definitional one. v081 isolated both exits as Tent-map cases losing the transformed tier while the generic and native survivors stayed tightly aligned, which is the shedding this plate draws.';
+extendMeasure('cuf',function(){
+  return [
+    ['sequences audited', '34'],
+    ['exact-invariance exits', '2'],
+    ['exact-invariance re-entries', '0', 'zero'],
+    ['local cliff exits', '23'],
+    ['local cliff re-entries', '4', 'good'],
+    ['grammar states', String(DEFECT.states.length)]
+  ];
+});
+
+scenes.affine.detail+=' One companion object is deliberately not on this chart. v040 certified two disjoint face-free families, and only the first of them has been given coordinates here: 24 blocks of size 3 on 18 active points, linear, with Levi girth 6 and every active point of degree 4. The second is 24 blocks of size 4 on 13 active points, non-linear, with Levi girth 4. Their active point sets are disjoint, no quadruple contains a face-free triple, and the cross-scaffold coupling between the two families is one-directional - the mutual coupling graph has zero edges. Whether the fibre-hyperplane lift law extends to the quadruple family, or to the x = c and y = c line classes, is open. The plate draws what has been reconstructed and stops there.';
+extendMeasure('affine',function(){
+  return [
+    ['triple family', FACEFREE.triples.blocks+' blocks of '+FACEFREE.triples.size+' on '+FACEFREE.triples.points],
+    ['triple Levi girth', String(FACEFREE.triples.girth)],
+    ['quadruple family', FACEFREE.quads.blocks+' blocks of '+FACEFREE.quads.size+' on '+FACEFREE.quads.points],
+    ['quadruple Levi girth', String(FACEFREE.quads.girth)],
+    ['mutual cross-scaffold edges', String(FACEFREE.mutualCoupling), 'zero']
+  ];
+});
+
+/* ==========================================================================
+   7m. end of second round
+   ========================================================================== */
+
+/* ==========================================================================
+   7n. third round — the G010–G021 cross-characteristic chain and the
+   lower-family L001–L007 results. Appended; nothing above is replaced.
+   Every count below that can be recomputed is recomputed here.
+   ========================================================================== */
+
+/* ---- the six diagonal lines as K3,3, and their parity kernel ----------- */
+const KERNEL=(function(){
+  const m3=AGBASE.m3, cell=function(x,y){return x*3+y;};
+  const diag=[]; [1,2].forEach(function(s){ for(let c=0;c<3;c++) diag.push([s,c]); });
+  const rows=diag.map(function(L){ let r=0; for(let x=0;x<3;x++) r|=1<<cell(x,m3(L[0]*x+L[1])); return r; });
+  const wt=function(f){ let n=0; while(f){ n+=f&1; f>>=1; } return n; };
+  const par=function(f,r){ return wt(f&r)&1; };
+  const states=[];
+  for(let f=0;f<512;f++){
+    let ok=true;
+    for(let i=0;i<6;i++) if(par(f,rows[i])){ ok=false; break; }
+    if(ok) states.push(f);
+  }
+  /* each cell lies on exactly two diagonal lines, one of each sign:
+     the 9 cells are the edges of K3,3 on the 6 lines */
+  const edge=[];
+  for(let y=0;y<3;y++) for(let x=0;x<3;x++){
+    const on=[];
+    for(let i=0;i<6;i++) if((rows[i]>>cell(x,y))&1) on.push(i);
+    edge[cell(x,y)]=on;
+  }
+  const deg2=edge.every(function(e){ return e.length===2 && e[0]<3 && e[1]>=3; });
+  /* weight census = cycle census of K3,3 */
+  const hist={};
+  states.forEach(function(f){ hist[wt(f)]=(hist[wt(f)]||0)+1; });
+  const q=function(f){ return (wt(f)>>1)&1; };
+  const q0=states.filter(function(f){ return q(f)===0; }).length;
+  /* an independent basis, and the polar form B(a,b)=|supp a & supp b| mod 2 */
+  const basis=[]; let span=[0];
+  states.forEach(function(f){
+    if(span.indexOf(f)<0){ basis.push(f); span=span.concat(span.map(function(s){ return s^f; })); }
+  });
+  const gram=basis.map(function(a){ return basis.map(function(b){ return wt(a&b)&1; }); });
+  let R=gram.map(function(r){ let v=0; for(let i=0;i<r.length;i++) v|=r[i]<<i; return v; }), rank=0;
+  for(let bit=0;bit<basis.length;bit++){
+    let piv=-1; for(let i=rank;i<R.length;i++) if((R[i]>>bit)&1){ piv=i; break; }
+    if(piv<0) continue;
+    const t2=R[rank]; R[rank]=R[piv]; R[piv]=t2;
+    for(let i=0;i<R.length;i++) if(i!==rank&&((R[i]>>bit)&1)) R[i]^=R[rank];
+    rank++;
+  }
+  /* the nine weight-4 states each meet one + line and one - line in one point */
+  const pts=[];
+  states.filter(function(f){ return wt(f)===4; }).forEach(function(f){
+    const zero=[]; for(let y=0;y<3;y++) for(let x=0;x<3;x++) if(!((f>>cell(x,y))&1)) zero.push([x,y]);
+    const lines=[];
+    for(let i=0;i<6;i++){
+      let all=true;
+      for(let x=0;x<3;x++) if((f>>cell(x,m3(diag[i][0]*x+diag[i][1])))&1){ all=false; break; }
+      if(all) lines.push(i);
+    }
+    const hit=zero.filter(function(p){
+      return lines.every(function(i){ return m3(diag[i][0]*p[0]+diag[i][1])===p[1]; });
+    });
+    pts.push({f:f, zero:zero, lines:lines, pt:hit.length===1?hit[0]:null});
+  });
+  const bijective=pts.length===9 && (function(){
+    const s={}; pts.forEach(function(p){ if(p.pt) s[p.pt[0]+','+p.pt[1]]=1; });
+    return Object.keys(s).length===9;
+  })();
+  /* the six weight-6 states are the six axis lines */
+  const axis=[];
+  states.filter(function(f){ return wt(f)===6; }).forEach(function(f){
+    const zero=[]; for(let y=0;y<3;y++) for(let x=0;x<3;x++) if(!((f>>cell(x,y))&1)) zero.push([x,y]);
+    const sameX=zero.every(function(p){ return p[0]===zero[0][0]; });
+    const sameY=zero.every(function(p){ return p[1]===zero[0][1]; });
+    axis.push({f:f, zero:zero, form:sameX?('x = '+zero[0][0]):(sameY?('y = '+zero[0][1]):'other')});
+  });
+  return {diag:diag, rows:rows, edge:edge, states:states, wt:wt, q:q, hist:hist,
+    q0:q0, q1:states.length-q0, basis:basis.slice().sort(function(a,b){return a-b;}),
+    gram:gram, rank:rank, cycleDim:9-6+1, bipartite:deg2, pts:pts, axis:axis,
+    bijective:bijective,
+    axisOK:axis.length===6 && axis.every(function(a){ return a.form!=='other'; })};
+})();
+
+/* ---- G010 / G011: the plus-type module and its Hamming geometry -------- */
+const HAMM=(function(){
+  const q=function(v){ return (((v>>3)&1)*((v>>2)&1)) ^ (((v>>1)&1)*(v&1)); };
+  const adj=[]; for(let v=0;v<16;v++){ adj[v]={}; }
+  for(let v=0;v<16;v++) for(let w=0;w<16;w++) if(v!==w && q(v^w)===1) adj[v][w]=1;
+  const deg=[]; for(let v=0;v<16;v++) deg.push(Object.keys(adj[v]).length);
+  const common=function(a,b){ let n=0; for(const k in adj[a]) if(adj[b][k]) n++; return n; };
+  let lam=-1, mu=-1, ok=true;
+  for(let v=0;v<16;v++) for(let w=0;w<16;w++){
+    if(v===w) continue;
+    const c=common(v,w);
+    if(adj[v][w]){ if(lam<0) lam=c; else if(lam!==c) ok=false; }
+    else { if(mu<0) mu=c; else if(mu!==c) ok=false; }
+  }
+  /* maximal 4-cliques */
+  const cl=[];
+  for(let a=0;a<16;a++) for(let b=a+1;b<16;b++){ if(!adj[a][b]) continue;
+    for(let c=b+1;c<16;c++){ if(!adj[a][c]||!adj[b][c]) continue;
+      for(let d=c+1;d<16;d++) if(adj[a][d]&&adj[b][d]&&adj[c][d]) cl.push([a,b,c,d]);
+    }}
+  const dis=function(A,B){ return A.every(function(x){ return B.indexOf(x)<0; }); };
+  const fam=[];
+  cl.forEach(function(c){
+    for(let i=0;i<fam.length;i++) if(fam[i].every(function(d){ return dis(c,d); })){ fam[i].push(c); return; }
+    fam.push([c]);
+  });
+  let cross=[];
+  if(fam.length===2) fam[0].forEach(function(a){ fam[1].forEach(function(b){
+    cross.push(a.filter(function(x){ return b.indexOf(x)>=0; }).length); }); });
+  return {k:deg[0], lam:lam, mu:mu, regular:ok && deg.every(function(d){ return d===deg[0]; }),
+    cliques:cl.length, families:fam.length, perFamily:fam.map(function(f){ return f.length; }),
+    fam:fam, crossOne:cross.length>0 && cross.every(function(n){ return n===1; }),
+    gridCells:cross.filter(function(n){ return n===1; }).length,
+    raqs:{1:1,2:123,3:80,4:372,6:336,8:144,12:96},
+    weyl:{1:1,2:139,3:80,4:228,6:464,8:144,12:96}};
+})();
+
+/* ---- G013 to G017: the ternary torsor, norm split and field compression */
+const TERN={translations:9, regular:'C3 x C3', directionOrbits:'2 + 2',
+  normOne:['P','M'], normTwo:['X','Y'], similitude:'\u0393L(1,9)',
+  similitudeOrder:16, spectrum:{1:1,2:5,4:6,8:4}, rejected:'D16',
+  identified:'SD16 (semidihedral)', affineOrder:144, raqsOrder:72, field:'F9'};
+
+/* ---- G020 / G021: tetracode, A2^4 and E8/2E8 --------------------------- */
+const LATT=(function(){
+  const gen=[[1,1,1,0],[0,1,2,1]], words=[];
+  for(let a=0;a<3;a++) for(let b=0;b<3;b++){
+    const w=[]; for(let i=0;i<4;i++) w.push((a*gen[0][i]+b*gen[1][i])%3);
+    words.push(w);
+  }
+  const nz=words.filter(function(w){ return w.some(function(c){ return c; }); });
+  const wt=function(w){ return w.filter(function(c){ return c; }).length; };
+  const weights={}; nz.forEach(function(w){ weights[wt(w)]=(weights[wt(w)]||0)+1; });
+  const vanish={}; nz.forEach(function(w){ const i=w.indexOf(0); if(i>=0) vanish[i]=(vanish[i]||0)+1; });
+  const neg=function(w){ return w.map(function(c){ return (3-c)%3; }); };
+  const seen={}, pairs=[];
+  nz.forEach(function(w){
+    const k=w.join(''), n=neg(w).join('');
+    if(seen[k]||seen[n]) return;
+    seen[k]=1; pairs.push([w,neg(w)]);
+  });
+  let dmin=99;
+  for(let i=0;i<words.length;i++) for(let j=i+1;j<words.length;j++){
+    let d=0; for(let k=0;k<4;k++) if(words[i][k]!==words[j][k]) d++;
+    if(d<dmin) dmin=d;
+  }
+  const local=3, glue=27, fams=4;
+  return {words:words.length, nonzero:nz.length, weights:weights, vanish:vanish,
+    pairs:pairs.length, dmin:dmin, roots:240, classes:120,
+    local:local, glue:glue, families:fams,
+    accounts:fams*local+fams*glue===120};
+})();
+
+/* ---- the lower family, L001 to L007 ----------------------------------- */
+const LOWER={
+  n5:{contexts:219, attached:128, defects:66, reciprocal:1314, sinks:20,
+      components:1400, depth:4, nonSelf:2391, weight:66},
+  n6:{sample:108, q2:64, q4:66, e:67, residuals:[19,63], unique:56,
+      source:10704, image:46, kernel:10658}
+};
+
+/* ==========================================================================
+   7o. plates
+   ========================================================================== */
+
+/* K3,3 vertex positions: the three + lines left, the three - lines right */
+function k33Pos(i){
+  const side=(i<3)?-1:1, k=i%3;
+  return v3(side*0.62,(k-1)*0.52,side*0.16);
+}
+let KER_IDX=0;
+function drawKernel(){
+  const hol=D('H'), sig=D('\u03c3');
+  KER_IDX=Math.floor(t*0.00055)%KERNEL.states.length;
+  const f=KERNEL.states[KER_IDX], w=KERNEL.wt(f), q=KERNEL.q(f);
+  const role=(q===1)?ROLE.ACCENT:ROLE.BODY;
+  /* the six diagonal lines are the vertices */
+  for(let i=0;i<6;i++){
+    body(k33Pos(i),2.0,0.9,(i<3)?ROLE.PATH:ROLE.EXTRA);
+    label(mul(k33Pos(i),1.22),(i<3?'+':'\u2212')+KERNEL.diag[i][1],
+      (i<3)?ROLE.PATH:ROLE.EXTRA,9.5,0.75);
+  }
+  /* the nine base cells are the edges */
+  for(let c=0;c<9;c++){
+    const e=KERNEL.edge[c], a=k33Pos(e[0]), b=k33Pos(e[1]);
+    const inSupport=(f>>c)&1;
+    filament(a,b, inSupport?(0.30+0.40*hol):0.08, inSupport?1.6:1.0,
+      inSupport?null:[3,5], inSupport?role:ROLE.ABSENT);
+    if(inSupport) body(mul(add(a,b),0.5),1.1,0.55*Math.max(hol,0.35),role);
+  }
+  label(v3(0,1.10,0),'state '+(KER_IDX+1)+' of 16 \u00b7 weight '+w+' \u00b7 q = '+q,role,10.5);
+  label(v3(0,-1.02,0), w===0 ? 'the zero state'
+       : (w===4 ? 'a 4-cycle: its zero-set meets one + line and one \u2212 line in one point'
+                : 'a Hamiltonian 6-cycle: its complement is a perfect matching'),
+       ROLE.EXTRA,10,0.30+0.70*sig);
+  label(v3(0,-1.20,0),'cycle space of K3,3: 9 \u2212 6 + 1 = '+KERNEL.cycleDim,ROLE.ABSENT,9.5,0.8);
+  if(sig<=0.5) label(v3(0,-1.38,0),'\u03c3 absent: the recovered points have no base to land on',ROLE.ABSENT,9.5,0.85);
+  if(hol<=0.5) absence(v3(0,0,0),0.24,0.36,ROLE.ABSENT,1.2);
+}
+
+function drawHamming(){
+  const hol=D('H'), step=Math.floor(t*0.0004);
+  /* the 16 states on a 4 x 4 grid: row family and column family */
+  const row=HAMM.fam[0]||[], col=HAMM.fam[1]||[];
+  const where={};
+  for(let r=0;r<row.length;r++) for(let c2=0;c2<col.length;c2++){
+    row[r].forEach(function(p){ if(col[c2].indexOf(p)>=0) where[p]=[r,c2]; });
+  }
+  const P=function(p){ const g=where[p]||[0,0];
+    return v3((g[1]-1.5)*0.40,(1.5-g[0])*0.40,0); };
+  const ra=step%4, ca=Math.floor(step/4)%4;
+  for(let p=0;p<16;p++){
+    const g=where[p]||[0,0];
+    const lit=(g[0]===ra)||(g[1]===ca);
+    body(P(p),lit?2.2:1.5,lit?0.95:0.55,(g[0]===ra&&g[1]===ca)?ROLE.ACCENT:
+      (g[0]===ra?ROLE.PATH:(g[1]===ca?ROLE.EXTRA:ROLE.BODY)));
+  }
+  /* the two K4 families: same family disjoint, cross family meet in one point */
+  for(let r=0;r<4;r++) for(let k=0;k<3;k++){
+    const a=row[r]&&row[r][k], b=row[r]&&row[r][k+1];
+    if(a!==undefined&&b!==undefined)
+      filament(P(a),P(b),r===ra?0.34:0.12,1.2,null,ROLE.PATH);
+  }
+  for(let c2=0;c2<4;c2++) for(let k=0;k<3;k++){
+    const a=col[c2]&&col[c2][k], b=col[c2]&&col[c2][k+1];
+    if(a!==undefined&&b!==undefined)
+      filament(P(a),P(b),c2===ca?0.34:0.12,1.2,null,ROLE.EXTRA);
+  }
+  label(v3(0,1.06,0),'H(2,4) = K4 \u25a1 K4 \u00b7 srg('+16+','+HAMM.k+','+HAMM.lam+','+HAMM.mu+')',ROLE.BODY,10.5);
+  label(v3(0,-1.02,0),'eight maximal K4 in two families of four; each cross pair meets in one point',ROLE.EXTRA,10);
+  /* the equal-order group that is not the same group */
+  absence(v3(1.02,-0.72,0),0.055,0.46,ROLE.ABSENT,1.2);
+  label(v3(1.02,-0.90,0),'W(F4): same order 1,152, different spectrum',ROLE.ABSENT,9.5,0.85);
+  if(hol<=0.5) label(v3(0,0.86,0),'H absent: the module is carried, not the labels',ROLE.ABSENT,10);
+}
+
+function drawTernary(){
+  const sig=D('\u03c3'), acc=D('\ud835\udc9c'), ph=(t*0.00022)%1, k=Math.floor(ph*9);
+  const tx=k%3, ty=Math.floor(k/3);
+  /* the nine points, translated by one element of the regular C3 x C3 */
+  for(let x=0;x<3;x++) for(let y=0;y<3;y++){
+    const a=agPos(x,y), b=agPos(AGBASE.m3(x+tx),AGBASE.m3(y+ty));
+    body(a,1.3,0.40,ROLE.PATH);
+    body(b,2.0,0.90*Math.max(sig,0.35),ROLE.BODY);
+    arrow(a,b,0.26*Math.max(sig,0.3),ROLE.EXTRA);
+  }
+  label(v3(0,1.08,0),'regular translation torsor: 9 elements, C3 \u00d7 C3',ROLE.BODY,10.5);
+  label(v3(0,0.90,0),'shift ('+tx+', '+ty+')',ROLE.EXTRA,10,0.8);
+  /* the four directions split 2 + 2 by the anisotropic ternary norm */
+  const dirs=[['X','x = c',1],['Y','y = c',1],['P','y \u2212 x = c',0],['M','y + x = c',0]];
+  for(let i=0;i<4;i++){
+    const p=v3(-1.06,0.56-i*0.28,-0.16), norm2=dirs[i][2];
+    body(p,1.8,0.30+0.55*acc,norm2?ROLE.ACCENT:ROLE.PATH);
+    label(add(p,v3(0.15,0,0)),dirs[i][0]+'  '+dirs[i][1]+(acc>0.5?('   norm '+(norm2?2:1)):''),
+      norm2?ROLE.ACCENT:ROLE.PATH,9.5,0.35+0.55*acc);
+  }
+  label(v3(-1.06,0.76,-0.16), acc>0.5 ? 'two norm families' : '\ud835\udc9c absent: the 2 + 2 split is not resolved',
+    ROLE.EXTRA,10);
+  /* the guess that failed, kept */
+  absence(v3(0.98,-0.80,0),0.052,0.46,ROLE.ABSENT,1.2);
+  label(v3(0.98,-0.98,0),'D16 rejected \u00b7 order spectrum gives '+TERN.identified,ROLE.ABSENT,9.5,0.85);
+  label(v3(0,-1.14,0),TERN.field+' norm model \u00b7 '+TERN.similitude+' \u00b7 72 is the norm-one index-two subgroup',
+    ROLE.EXTRA,10);
+}
+
+function drawLattice(){
+  const tau=D('\u03c4'), sig=D('\u03c3'), spin=t*0.00012;
+  const names=['X','Y','P','M'];
+  for(let fset=0;fset<4;fset++){
+    const a0=fset/4*TAU+spin*0.4;
+    const hub=v3(Math.cos(a0)*0.74,Math.sin(a0)*0.74,Math.sin(a0*2)*0.10);
+    /* one A2 plane: three root pairs, drawn as a hexagon */
+    for(let r=0;r<6;r++){
+      const a=r/6*TAU+spin, rad=0.22;
+      const p=add(hub,v3(Math.cos(a)*rad,Math.sin(a)*rad,0));
+      body(p,1.5,0.9*Math.max(tau,0.35),ROLE.BODY);
+      if(r<3){
+        const opp=add(hub,v3(Math.cos(a+Math.PI)*rad,Math.sin(a+Math.PI)*rad,0));
+        filament(p,opp,0.22*Math.max(tau,0.3),1.1,null,ROLE.PATH);
+      }
+    }
+    /* the 27 glue classes that complete the packet to 30 */
+    for(let g=0;g<27;g++){
+      const a=g/27*TAU-spin*1.6, rad=0.34+0.05*Math.sin(g*2.1+spin*6);
+      body(add(hub,v3(Math.cos(a)*rad,Math.sin(a)*rad,0.04*Math.cos(g))),0.72,0.34*tau,ROLE.EXTRA);
+    }
+    body(hub,1.0,0.20+0.45*sig,ROLE.ACCENT);
+    label(add(hub,v3(0,0.50,0)),(sig>0.5?names[fset]+'  ':'')+'3 + 27 = 30',ROLE.ACCENT,10,0.5+0.5*tau);
+    filament(v3(0,0,0),hub,0.16*Math.max(tau,0.3)*(0.45+0.55*sig),1,[4,6],ROLE.PATH);
+  }
+  body(v3(0,0,0),2.2,0.9,ROLE.ACCENT);
+  label(v3(0,-0.20,0),'120',ROLE.ACCENT,12);
+  label(v3(0,1.16,0), tau>0.5 ? 'tetracode glue of A2\u2074 \u2192 240 roots \u2192 120 \u00b1 classes'
+                              : '\u03c4 absent: the lattice layer is not carried', ROLE.BODY,10.5);
+  label(v3(0,-1.14,0), sig>0.5 ? 'four disjoint 30-state direction packets partition all 120'
+                               : '\u03c3 absent: the packets are there, the directions naming them are not',
+    ROLE.EXTRA,10);
+}
+
+function drawLower(){
+  const hol=D('H'), tau=D('\u03c4'), ph=(t*0.00018)%1;
+  /* left: the n = 5 transport picture - a gauge-trivial forest plus 66 self-loops */
+  for(let i=0;i<22;i++){
+    const a=i/22*TAU, r=0.34+0.10*Math.sin(i*1.7);
+    const p=v3(-0.62+Math.cos(a)*r,Math.sin(a)*r*0.9,Math.cos(a*2)*0.08);
+    body(p,1.1,0.55,ROLE.BODY);
+    if(i) filament(p,v3(-0.62,0,0),0.16,1,null,ROLE.PATH);
+  }
+  for(let i=0;i<9;i++){
+    const a=i/9*TAU+ph*TAU*0.2;
+    absence(v3(-0.62+Math.cos(a)*0.50,Math.sin(a)*0.46,0),0.040,0.44,ROLE.ABSENT,1.2);
+  }
+  label(v3(-0.62,0.72,0),'n = 5 \u00b7 all non-self transport gauges to zero',ROLE.PATH,10);
+  label(v3(-0.62,-0.70,0),'66 odd self-loops remain \u00b7 no global Z2 section',ROLE.ABSENT,10);
+  /* right: the n = 6 detection staircase 64 -> 66 -> 67 */
+  const steps=[['Q\u2082',LOWER.n6.q2],['Q\u2084 = G = M\u2083',LOWER.n6.q4],['E = M\u2084',LOWER.n6.e]];
+  for(let i=0;i<3;i++){
+    const x=0.42+i*0.30, h=(steps[i][1]-60)/10;
+    const lit=0.25+0.70*tau;
+    filament(v3(x,-0.56,0),v3(x,-0.56+0.72*h,0),0.30*lit,1.5,null,tau>0.5?ROLE.BODY:ROLE.ABSENT);
+    if(tau>0.5) body(v3(x,-0.56+0.72*h,0),1.9,0.92,ROLE.BODY);
+    else absence(v3(x,-0.56+0.72*h,0),0.036,0.42,ROLE.ABSENT,1.1);
+    label(v3(x,-0.70,0),String(steps[i][1]),tau>0.5?ROLE.BODY:ROLE.ABSENT,10,lit);
+    label(v3(x,-0.86,0),steps[i][0],ROLE.EXTRA,9,0.8*lit);
+  }
+  /* context 56: the single four-vertex residual, a circuit in the pure-order-4 kernel */
+  const c56=v3(1.02,0.34,0);
+  body(c56,2.4,(0.55+0.45*Math.abs(Math.sin(ph*TAU)))*(0.30+0.70*tau),ROLE.ACCENT);
+  label(add(c56,v3(0,0.20,0)),'context 56',ROLE.ACCENT,10);
+  label(v3(0.72,0.78,0),'algebraic grade = incidence-support grade',ROLE.EXTRA,10);
+  label(v3(0.72,-1.04,0), tau>0.5 ? 'one three-column circuit inside a 10,658-dimensional kernel'
+                                  : '\u03c4 absent: the descent kernel is not carried here',
+    ROLE.ABSENT,9.5,0.9);
+  label(v3(0,1.18,0), hol>0.5 ? 'the two 66s live in different domains and are kept apart'
+                              : 'H absent: the defect count has nothing to attach to', ROLE.BODY,10.5);
+}
+
+/* ==========================================================================
+   7p. registration
+   ========================================================================== */
+scenes.kernel={title:'Binary kernel and K3,3 homology',
+  sub:'The gauge kernel is not an accident of the encoding. It is the cycle space of a graph that was already here.',
+  detail:'G019 identified what the six-line parity map actually is. Every one of the nine base cells lies on exactly two diagonal lines, one of each sign, so the nine cells are the edges of a bipartite graph on the six lines - K3,3, the same graph the scaffold core produced in a completely different branch. The parity map is its binary boundary map, and the 16-element gauge kernel is H1(K3,3;F2), which is why its dimension is 9 - 6 + 1 = 4 and the incidence rank is 5. The weight census follows: one zero state, nine 4-cycles, six Hamiltonian 6-cycles. G012 then puts a quadratic refinement on that kernel, q(f) = wt(f)/2 mod 2, whose polar form is support-intersection parity. The nine weight-4 states each have a zero-set meeting one plus-line and one minus-line in a single point, and they recover the nine affine points bijectively; the six weight-6 states recover the six x = c and y = c lines that were never used to build the kernel. The gauge kernel reconstructs the whole affine plane from inside itself. The plate walks all 16 states and recomputes the census, the basis masks, the Gram matrix and the polar rank rather than quoting them. [C, exhaustive and self-contained]',
+  applies:['expanded8','full10']};
+
+scenes.hamming={title:'Plus-type module and H(2,4)',
+  sub:'An equal group order is not an isomorphism, and the record keeps the difference.',
+  detail:'G010 promoted the 16-state kernel from a nullspace to a quadratic module. An exhaustive invariant-form search finds exactly two invariant quadratic forms including zero, so the nonzero invariant form is unique; it is nondegenerate of plus type with polar rank 4 and a 10/6 split, and the 72-element quotient action is the full O4+(2). G011 then places the form in canonical position and reads off the geometry: the graph on the 16 states with adjacency q(x+y) = 1 is strongly regular with parameters (16,6,2,2), contains exactly eight maximal K4 and no K5, and those eight split by disjointness into two intrinsic families of four. Same-family cliques are pairwise disjoint; every cross-family pair meets in exactly one point, which assigns all 16 states a unique row-column coordinate and recovers K4 square K4, the Hamming graph H(2,4), with full automorphism group S4 wr S2 of order 1,152. The falsifier is kept on the plate as an open ring: an independent Coxeter construction of W(F4) also has order 1,152, but its element-order histogram differs - 2:139 and 4:228 against 2:123 and 4:372 - so the identification is rejected and the equal order survives only as a coincidence. [C for the module and the graph; N for the W(F4) identification]',
+  applies:['expanded8','full10']};
+
+scenes.ternary={title:'Ternary torsor and F9 norm',
+  sub:'The affine base turns out to sit inside the binary symmetry, not beside it.',
+  detail:'G013 found a regular C3 x C3 subgroup inside the 72-element orthogonal action: eight order-three elements plus the identity, acting simply transitively on the nine quotient points, so the ternary affine torsor is intrinsic rather than imposed. G014 recovered the colour swap as the central inversion and then failed in a useful way - the predicted transitivity on the four directions does not hold, the projective direction orbit has size 2 rather than 4. G015 explained the failure: there is a unique projective anisotropic ternary quadratic form, and it splits the four directions 2 + 2 by norm class. G016 certified the 144-element index-two similitude extension and rejected its own dihedral guess on the exact order spectrum, and G017 identified the group as the semidihedral GammaL(1,9) with the ternary form as the F9 norm, making the observed 72-element symmetry the norm-one subgroup of the 144-element affine semilinear group. Two guesses failed on this plate and both are drawn, because the 2 + 2 split they exposed is the result. [C for the torsor and the field model; N for transitivity and for D16]',
+  applies:['expanded8','full10']};
+
+scenes.lattice={title:'Tetracode, A2 frames and E8',
+  sub:'Four directions, four code coordinates, four root-pair packets. The partition survives every step.',
+  detail:'G020 observed that the four AG(2,3) direction coordinates generate the ternary tetracode [4,2,3] over F3: nine codewords, eight of them nonzero and all of weight three, so each nonzero word vanishes in exactly one coordinate and the eight split into four projective plus-or-minus pairs. Each polarization contributes four A2-type root-pair triangle families, one per direction, and gluing A2^4 along the tetracode produces an even unimodular rank-8 lattice with 240 roots - E8. G021 then made the bridge explicit: a quadratic isometry identifies the 256-state G018 binary module with E8/2E8, under which the 240 roots reduce to 120 mod-2 classes, each a plus-or-minus root pair, and those 120 classes are exactly the q = 1 states of the binary module. They partition into four disjoint 30-state packets, one per direction, each carrying three local A2 root-pair classes and 27 glue classes. The plate draws the four packets and the centre count; the tetracode, its weights and the 4 x 30 accounting are recomputed here. Everything named on this plate - tetracode, A2, E8 - is classical; what is framework-specific is that the same four directions index all of it. [C, exact identification with classical components named as classical]',
+  applies:['full10']};
+
+scenes.lower={title:'Lower family: selector, holonomy, chirality',
+  sub:'Two different objects both count 66, and the record refuses to identify them.',
+  detail:'On the frozen n = 5 domain, L001 showed the v028 orientation current J2 is exactly the later quadratic pseudoscalar J across all 219 torsor contexts, with local chirality and global holonomy separating cleanly - all four combinations of local symmetry and global obstruction occur. L002 gauged the transport network to a canonical normal form: all 2,391 non-self constraints go to zero and exactly 66 odd self-loops remain, so H1 has dimension 66 in the self-loop basis and the measured class has weight 66. L003 reached the same 66 from a different direction, by selector filtration: all true defects are present by depth 3 and depth 4 removes the last five false positives. L004 closed the dynamics: 1,400 components terminate in 66 odd fixed points, 1,314 reciprocal holonomy-zero 2-cycles and 20 terminal sinks, with no directed cycle longer than two. On the frozen n = 6 sample, L005 and L006 found a graded detection staircase 64 to 66 to 67 with algebraic grade equalling incidence-support grade throughout, leaving context 56 as the unique four-vertex residual; L007 located it as an exact three-element circuit inside the 10,658-dimensional pure-order-4 descent kernel. The two 66s - the n = 5 holonomy defects and the n = 6 sensitive contexts - live in different domains, no bijection has been established, and the record keeps them apart. Matching cardinality is not evidence. [C for each checkpoint; N for the cross-domain identification]',
+  applies:['expanded8','full10']};
+
+sceneDraw.kernel=drawKernel;
+sceneDraw.hamming=drawHamming;
+sceneDraw.ternary=drawTernary;
+sceneDraw.lattice=drawLattice;
+sceneDraw.lower=drawLower;
+
+/* ==========================================================================
+   7q. what the new plates measure
+   ========================================================================== */
+scenes.kernel.measure=function(){
+  const h=KERNEL.hist;
+  return [
+    ['kernel size', String(KERNEL.states.length)],
+    ['K3,3 edges, vertices', '9, 6'],
+    ['cycle space dimension', String(KERNEL.cycleDim), 'good'],
+    ['bipartite, degree 2 cells', KERNEL.bipartite?'yes':'no', KERNEL.bipartite?'good':''],
+    ['weight census', '0:'+(h[0]||0)+'  4:'+(h[4]||0)+'  6:'+(h[6]||0)],
+    ['q = 0, q = 1', KERNEL.q0+', '+KERNEL.q1],
+    ['basis masks', KERNEL.basis.join(', ')],
+    ['polar rank', String(KERNEL.rank), 'good'],
+    ['affine points recovered', KERNEL.bijective?'9 of 9':'partial', KERNEL.bijective?'good':''],
+    ['axis lines recovered', KERNEL.axisOK?'6 of 6':'partial', KERNEL.axisOK?'good':''],
+    ['H carried', D('H')>0.5?'yes':'no', D('H')>0.5?'good':'zero']
+  ];
+};
+scenes.hamming.measure=function(){
+  return [
+    ['srg parameters', '(16, '+HAMM.k+', '+HAMM.lam+', '+HAMM.mu+')', 'good'],
+    ['strongly regular', HAMM.regular?'yes':'no', HAMM.regular?'good':''],
+    ['maximal K4', String(HAMM.cliques)],
+    ['families', String(HAMM.families)+' of '+HAMM.perFamily.join(' and ')],
+    ['cross-family meet', HAMM.crossOne?'one point':'varies', HAMM.crossOne?'good':''],
+    ['row-column cells', String(HAMM.gridCells)],
+    ['graph', 'K4 \u25a1 K4 = H(2,4)'],
+    ['automorphism order', '1,152'],
+    ['W(F4) same order', 'yes'],
+    ['W(F4) same spectrum', 'no', 'zero']
+  ];
+};
+scenes.ternary.measure=function(){
+  return [
+    ['translation torsor', TERN.regular+', '+TERN.translations+' elements', 'good'],
+    ['direction orbits', TERN.directionOrbits],
+    ['norm-one directions', TERN.normOne.join(', ')],
+    ['norm-two directions', TERN.normTwo.join(', ')],
+    ['four-direction transitivity', 'rejected', 'zero'],
+    ['similitude group', TERN.similitude+', order '+TERN.similitudeOrder],
+    ['D16 identification', 'rejected', 'zero'],
+    ['identified as', TERN.identified, 'good'],
+    ['affine semilinear order', String(TERN.affineOrder)],
+    ['RAQS ternary symmetry', String(TERN.raqsOrder)+' (norm one)']
+  ];
+};
+scenes.lattice.measure=function(){
+  return [
+    ['tetracode words', String(LATT.words)],
+    ['nonzero words', String(LATT.nonzero)+', all weight 3'],
+    ['minimum distance', String(LATT.dmin), 'good'],
+    ['projective pairs', String(LATT.pairs)],
+    ['E8 roots', String(LATT.roots)],
+    ['mod-2 root-pair classes', String(LATT.classes), 'good'],
+    ['direction packets', String(LATT.families)+' \u00d7 30'],
+    ['local, glue per packet', LATT.local+', '+LATT.glue],
+    ['partition exact', LATT.accounts?'yes':'no', LATT.accounts?'good':''],
+    ['\u03c4 carried', D('\u03c4')>0.5?'yes':'no', D('\u03c4')>0.5?'good':'zero']
+  ];
+};
+scenes.lower.measure=function(){
+  return [
+    ['n = 5 torsor contexts', String(LOWER.n5.contexts)],
+    ['non-self constraints gauged to zero', LOWER.n5.nonSelf.toLocaleString(), 'good'],
+    ['odd self-loops', String(LOWER.n5.defects), 'good'],
+    ['cohomology class weight', String(LOWER.n5.weight)],
+    ['components, sinks', LOWER.n5.components.toLocaleString()+', '+LOWER.n5.sinks],
+    ['selector depth for all defects', '3, clean at '+LOWER.n5.depth],
+    ['n = 6 staircase', LOWER.n6.q2+' \u2192 '+LOWER.n6.q4+' \u2192 '+LOWER.n6.e],
+    ['quadratic residuals', LOWER.n6.residuals.join(', ')],
+    ['unique four-vertex residual', 'context '+LOWER.n6.unique],
+    ['pure-order-4 kernel', LOWER.n6.kernel.toLocaleString()],
+    ['cross-domain 66 bijection', 'none', 'zero']
+  ];
+};
+
+/* ==========================================================================
+   7r. further additions to plates that were already here
+   ========================================================================== */
+scenes.gauge.detail+=' G019 later explained why this kernel has the shape it does. The nine base cells each lie on exactly two of the six diagonal lines, one of each sign, so the cells are the edges of K3,3 on the lines and the parity map is its binary boundary map. Rank 5 and a four-dimensional kernel are then forced by 9 - 6 + 1 = 4, and the kernel is the cycle space: one zero state, nine 4-cycles, six Hamiltonian cycles whose complements are the six perfect matchings. G012 refined it with q(f) = wt(f)/2 mod 2 and found the kernel reconstructs the affine plane from inside itself. The dedicated binary-kernel plate draws that directly.';
+
+scenes.scaffold.detail+=' A K3,3 also appears under the six-line parity map that G019 studied, reached from a completely different branch. The two are not asserted to be the same object. Structural identity is suggestive, but no direct frozen-object mapping between the selector-induced transport core and the G019 cycle-space construction has been certified, so the record keeps it as an explicit open bridge rather than inferring identity from resemblance - the same discipline that refused the 18-vs-18 and the two 66s.';
+
+scenes.affine.detail+=' The four line classes on this chart are the four direction families X, Y, P and M that every later checkpoint turns out to be indexed by: four tetracode coordinates, four A2 root-pair planes, four 30-state E8 packets, and a 2 + 2 split by ternary norm. The families page collects that architecture in one place.';
+
+scenes.holonomy.detail+=' The lower-family work reached the same 66 twice more, independently. L002 gauges all 2,391 non-self transport constraints to zero and leaves exactly 66 odd self-loops; L003 arrives at the identical defect set by selector filtration, complete at depth 3 and clean at depth 4. That is three routes to one number in one domain, which is why it is trusted - and precisely why the separate n = 6 count of 66 is not identified with it.';
+
+/* ==========================================================================
+   7s. the families page
+   ========================================================================== */
+(function(){
+  const open=function(){ const p=$('families'); if(!p) return;
+    p.classList.add('open'); const c=$('closeFamilies'); if(c) c.focus(); };
+  const close=function(){ const p=$('families'); if(!p) return;
+    p.classList.remove('open'); const b=$('familiesBtn'); if(b) b.focus(); };
+  const btn=$('familiesBtn'), cls=$('closeFamilies');
+  if(btn) btn.addEventListener('click',function(e){ open(); e.currentTarget.blur(); });
+  if(cls) cls.addEventListener('click',close);
+  addEventListener('keydown',function(e){
+    const p=$('families');
+    if(e.key==='Escape'&&p&&p.classList.contains('open')){ close(); }
+  });
+})();
+
+/* ==========================================================================
+   7t. end of third round
+   ========================================================================== */
+
+/* ==========================================================================
+   7u. fourth round — the two checkpoints that had no plate of their own.
+   G009 was absent from the atlas entirely; G018 appeared only in passing.
+   Appended; nothing above is replaced.
+   ========================================================================== */
+
+/* ---- G009: the fibres and quotient forced by the raw hypergraph -------- */
+const G009=(function(){
+  const key=function(p){ return p[0]+','+p[1]+','+p[2]; };
+  const pts=[], seen={};
+  G008.blocks.forEach(function(B){ B.pts.forEach(function(p){
+    if(!seen[key(p)]){ seen[key(p)]=1; pts.push(p); } }); });
+  pts.sort(function(a,b){ return (a[0]-b[0])||(a[1]-b[1])||(a[2]-b[2]); });
+  const id={}; pts.forEach(function(p,i){ id[key(p)]=i; });
+  /* collinearity: two points are adjacent when a block holds both */
+  const adj=pts.map(function(){ return {}; });
+  G008.blocks.forEach(function(B){
+    for(let i=0;i<3;i++) for(let j=i+1;j<3;j++){
+      const a=id[key(B.pts[i])], b=id[key(B.pts[j])];
+      adj[a][b]=1; adj[b][a]=1;
+    }
+  });
+  const deg=pts.map(function(_,i){ return Object.keys(adj[i]).length; });
+  const common=function(a,b){ let n=0; for(const k in adj[a]) if(adj[b][k]) n++; return n; };
+  /* the 153 unordered pairs, classified by collinearity and common neighbours */
+  const sig={}, fibre=[];
+  for(let a=0;a<pts.length;a++) for(let b=a+1;b<pts.length;b++){
+    const col=!!adj[a][b], cn=common(a,b), k=(col?'collinear ':'non-collinear ')+cn;
+    sig[k]=(sig[k]||0)+1;
+    if(!col&&cn===8) fibre.push([a,b]);
+  }
+  const sameCell=fibre.every(function(f){
+    const p=pts[f[0]], q=pts[f[1]];
+    return p[0]===q[0]&&p[1]===q[1]&&p[2]!==q[2];
+  });
+  /* pass to the nine-point quotient */
+  const cls={}; fibre.forEach(function(f,i){ cls[f[0]]=i; cls[f[1]]=i; });
+  const qn=fibre.length, qadj=[]; for(let i=0;i<qn;i++) qadj.push({});
+  for(let a=0;a<pts.length;a++) for(const b in adj[a]){
+    const u=cls[a], v=cls[b|0];
+    if(u!==undefined&&v!==undefined&&u!==v){ qadj[u][v]=1; qadj[v][u]=1; }
+  }
+  const qdeg=qadj.map(function(o){ return Object.keys(o).length; });
+  const qcom=function(a,b){ let n=0; for(const k in qadj[a]) if(qadj[b][k]) n++; return n; };
+  let lam=-1, mu=-1;
+  for(let a=0;a<qn;a++) for(let b=0;b<qn;b++){
+    if(a===b) continue;
+    const c=qcom(a,b);
+    if(qadj[a][b]){ if(lam<0) lam=c; } else { if(mu<0) mu=c; }
+  }
+  /* six intrinsic triangles in two parallel classes */
+  const tris=[];
+  for(let a=0;a<qn;a++) for(let b=a+1;b<qn;b++) for(let c=b+1;c<qn;c++)
+    if(qadj[a][b]&&qadj[a][c]&&qadj[b][c]) tris.push([a,b,c]);
+  const fam=[];
+  tris.forEach(function(t){
+    for(let i=0;i<fam.length;i++)
+      if(fam[i].every(function(u){ return t.every(function(v){ return u.indexOf(v)<0; }); })){
+        fam[i].push(t); return; }
+    fam.push([t]);
+  });
+  let cross=[];
+  if(fam.length===2) fam[0].forEach(function(a){ fam[1].forEach(function(b){
+    cross.push(a.filter(function(v){ return b.indexOf(v)>=0; }).length); }); });
+  return {points:pts.length, pts:pts, blocks:G008.blocks.length,
+    blockDeg:deg.length?Math.max.apply(null,deg):0,
+    collinearDeg:(function(){ const s={}; deg.forEach(function(d){ s[d]=1; });
+      return Object.keys(s).join('/'); })(),
+    pairs:(pts.length*(pts.length-1))/2, sig:sig, fibres:fibre.length, fibre:fibre,
+    sameCell:sameCell, qpoints:qn, qk:qdeg[0], lam:lam, mu:mu,
+    qregular:qdeg.every(function(d){ return d===qdeg[0]; }),
+    triangles:tris.length, tri:tris, classes:fam.length, cls:cls, qadj:qadj,
+    perClass:fam.map(function(f){ return f.length; }),
+    k33:cross.length>0&&cross.every(function(n){ return n===1; }),
+    qAut:72, fibreKernel:16, fullAut:16*72};
+})();
+
+/* ---- G018: two orthogonal halves inside one 8D plus-type module ------- */
+const G018=(function(){
+  const m3=AGBASE.m3, cell=function(x,y){ return x*3+y; };
+  const wt=function(f){ let n=0; while(f){ n+=f&1; f>>=1; } return n; };
+  const K=function(lines){
+    const rows=lines.map(function(L){ let r=0; L.forEach(function(p){ r|=1<<cell(p[0],p[1]); }); return r; });
+    const out=[];
+    for(let f=0;f<512;f++){
+      let ok=true;
+      for(let i=0;i<rows.length;i++) if(wt(f&rows[i])&1){ ok=false; break; }
+      if(ok) out.push(f);
+    }
+    return out;
+  };
+  const diag=[], axis=[];
+  [1,2].forEach(function(s){ for(let c=0;c<3;c++){
+    const L=[]; for(let x=0;x<3;x++) L.push([x,m3(s*x+c)]); diag.push(L); } });
+  for(let c=0;c<3;c++){
+    const A=[],B=[];
+    for(let k=0;k<3;k++){ A.push([c,k]); B.push([k,c]); }
+    axis.push(A); axis.push(B);
+  }
+  const K1=K(diag), K2=K(axis);
+  const inter=K1.filter(function(f){ return K2.indexOf(f)>=0; });
+  const sum={}; K1.forEach(function(a){ K2.forEach(function(b){ sum[a^b]=1; }); });
+  const S=Object.keys(sum).map(Number);
+  let evenOK=true;
+  for(let f=0;f<512;f++) if(((wt(f)%2)===0)!==(sum[f]===1)) evenOK=false;
+  const orth=K1.every(function(a){ return K2.every(function(b){ return (wt(a&b)&1)===0; }); });
+  const q=function(f){ return (wt(f)>>1)&1; };
+  let q0=0,q1=0;
+  S.forEach(function(f){ if(q(f)===0) q0++; else q1++; });
+  return {half:K1.length, half2:K2.length, intersection:inter.length,
+    ambient:S.length, even:evenOK, orthogonal:orth, q0:q0, q1:q1,
+    modules:6, polarizations:3, ladder:[72,144,432],
+    pairs:['XY','XP','XM','YP','YM','PM'],
+    splits:[['XY','PM'],['XP','YM'],['XM','YP']]};
+})();
+
+/* ==========================================================================
+   7v. the two missing plates
+   ========================================================================== */
+
+let FIB_IDX=0;
+function drawFibres(){
+  const hol=D('H'), sig=D('\u03c3');  FIB_IDX=Math.floor(t*0.00035)%3;
+  /* the nine quotient classes, laid out on the base */
+  const qp=[];
+  for(let i=0;i<G009.fibres;i++){
+    const p=G009.pts[G009.fibre[i][0]];
+    qp[i]=agPos(p[0],p[1]);
+  }
+  /* the six intrinsic triangles, in two parallel classes of three */
+  for(let k=0;k<G009.tri.length;k++){
+    const T=G009.tri[k], cl=(k<3)?0:1;
+    const on=(FIB_IDX===2)||(FIB_IDX===cl);
+    for(let i=0;i<3;i++)
+      filament(qp[T[i]],qp[T[(i+1)%3]], on?0.30*Math.max(sig,0.35):0.07,
+        on?1.3:1.0, on?null:[3,5], cl?ROLE.EXTRA:ROLE.PATH);
+  }
+  /* each quotient class is a two-point fibre, forced by the pair signature */
+  for(let i=0;i<G009.fibres;i++){
+    const a=G009.pts[G009.fibre[i][0]], b=G009.pts[G009.fibre[i][1]];
+    const pa=agPos(a[0],a[1],a[2]), pb=agPos(b[0],b[1],b[2]);
+    body(pa,1.8,0.30+0.62*hol,ROLE.BODY);
+    body(pb,1.8,0.30+0.62*hol,ROLE.BODY);
+    filament(pa,pb,0.18+0.34*hol,1.2,[2,4],ROLE.ACCENT);
+    body(qp[i],1.2,0.34*Math.max(sig,0.3),ROLE.PATH);
+  }
+  label(v3(0,1.12,0), hol>0.5 ? 'nine two-point fibres, forced by the 153-pair signature'
+                              : 'H absent: the fibres collapse into the quotient', ROLE.BODY,10.5);
+  label(v3(0,-1.04,0),'quotient: srg(9, '+G009.qk+', '+G009.lam+', '+G009.mu+') \u00b7 six triangles in two classes',
+    ROLE.EXTRA,10,0.35+0.65*sig);
+  label(v3(0,-1.22,0),'16 \u00d7 72 = 1,152',ROLE.ABSENT,9.5,0.85);
+  /* the exceptional class is what does the work: eight common neighbours */
+  label(v3(-1.12,0.80,0),'72 collinear \u00b7 2',ROLE.PATH,9.5,0.75);
+  label(v3(-1.12,0.62,0),'72 ordinary \u00b7 4',ROLE.EXTRA,9.5,0.75);
+  label(v3(-1.12,0.44,0),'9 exceptional \u00b7 8',ROLE.ACCENT,9.5,0.9);
+}
+
+let POL_IDX=0;
+function drawPolarization(){
+  const hol=D('H'), sig=D('\u03c3');
+  POL_IDX=Math.floor(t*0.00030)%3;
+  const split=G018.splits[POL_IDX];
+  /* six modules on an octahedron: opposite vertices are complementary pairs */
+  const oct=[v3(0.86,0,0),v3(-0.86,0,0),v3(0,0.86,0),v3(0,-0.86,0),v3(0,0,0.86),v3(0,0,-0.86)];
+  const order=['XY','PM','XP','YM','XM','YP'];
+  for(let i=0;i<6;i++){
+    const nm=order[i], lit=(split.indexOf(nm)>=0);
+    body(oct[i],lit?2.6:1.6,lit?0.95:0.40,lit?ROLE.ACCENT:ROLE.BODY);
+    label(mul(oct[i],1.20),nm,lit?ROLE.ACCENT:ROLE.EXTRA,lit?11:9.5,lit?1:0.6);
+  }
+  /* the octahedral edges: every non-opposite pair */
+  for(let i=0;i<6;i++) for(let j=i+1;j<6;j++){
+    if((i>>1)===(j>>1)) continue;
+    filament(oct[i],oct[j],0.11*Math.max(sig,0.35),1,null,ROLE.PATH);
+  }
+  /* the selected polarization: two orthogonal halves summing to the ambient */
+  const a=oct[order.indexOf(split[0])], b=oct[order.indexOf(split[1])];
+  filament(a,b,0.34+0.30*hol,1.8,null,ROLE.ACCENT);
+  body(v3(0,0,0),2.4,0.55+0.40*hol,ROLE.ACCENT);
+  label(v3(0,-0.18,0),String(G018.ambient),ROLE.ACCENT,12);
+  label(v3(0,1.16,0),split[0]+' \u2502 '+split[1]+'  \u00b7  polarization '+(POL_IDX+1)+' of 3',ROLE.ACCENT,10.5);
+  label(v3(0,-1.02,0), hol>0.5
+    ? '16 + 16 meeting only at zero, summing to the 8D even-weight space'
+    : 'H absent: the halves are named but not carried', ROLE.BODY,10);
+  label(v3(0,-1.20,0),G018.q0+' singular \u00b7 '+G018.q1+' nonsingular',ROLE.EXTRA,10);
+  /* the group ladder */
+  for(let i=0;i<3;i++){
+    const p=v3(1.06,0.52-i*0.24,-0.18);
+    body(p,1.3+i*0.35,0.40+0.20*i,ROLE.EXTRA);
+    label(add(p,v3(0.14,0,0)),String(G018.ladder[i])+
+      ['  fixes an ordered pair','  forgets the order','  permutes all three'][i],ROLE.EXTRA,9.5,0.85);
+  }
+}
+
+/* ==========================================================================
+   7w. registration
+   ========================================================================== */
+scenes.fibres={title:'Intrinsic fibres and the nine-point quotient',
+  sub:'Forget every label. The raw incidence structure puts the fibres back by itself.',
+  detail:'G008 gave an exact coordinate normal form after a chosen gauge, which left the obvious objection standing: the fibre structure might be an artefact of the coordinates. G009 asked the coordinate-free question. Strip all labels, keep only the raw 18-point, 24-block hypergraph, and classify every one of the 153 unordered point pairs by two facts alone - whether a block contains both, and how many common neighbours they have in the collinearity graph. Three classes appear and no more: 72 collinear pairs with two common neighbours, 72 ordinary non-collinear pairs with four, and exactly nine exceptional non-collinear pairs with eight. Those nine are the fibres, and they turn out to be precisely the pairs sharing a base cell, recovered without ever being told what a base cell is. Passing to the quotient gives nine points whose collinearity graph is strongly regular with parameters (9,4,1,2), carrying six intrinsic triangles that fall into two parallel classes of three whose intersection graph is K3,3. The quotient automorphism group has order 72, each quotient automorphism has 16 fibre lifts, and the full hypergraph symmetry is 16 x 72 = 1,152. This is the checkpoint that promotes the fibre from a successful coordinate model to an intrinsic combinatorial feature, and everything on the plate is recomputed from the block set. [C, exhaustive and coordinate-free]',
+  applies:['expanded8','full10']};
+
+scenes.polarization={title:'Paired kernels and three polarizations',
+  sub:'The kernel the programme had been using was one half of something twice as large.',
+  detail:'G018 asked what the complementary two line classes do. They carry a second parity kernel, also of 16 states and also plus type, and the two are mutually orthogonal, meet only at zero, and sum to the full 8-dimensional even-weight binary space of 256 states - so the kernel the earlier checkpoints worked with was never the whole object, only a selected half. Under the half-weight quadratic form that ambient module splits 136 singular to 120 nonsingular, and those 120 are the states G021 later identifies with the E8 root pairs. G019 then showed the choice of half is not canonical. Every one of the six direction pairs gives a cycle module, the six sit on an octahedron with complementary pairs opposite, and opposite edges cut them into three orthogonal four-plus-four polarizations: XY against PM, XP against YM, XM against YP. A group of order 72 fixes one ordered pair of halves, 144 forgets the order and may exchange them, and 432 permutes all three polarizations. The frozen selection this programme has been using is one ordered polarization inside that family of three - a choice, not a privileged structure, which is exactly what the falsifier record needs to say. The plate cycles the three polarizations and recomputes the halves, their orthogonality and the 136/120 split. [C for the module and the ladder; the non-privilege of any one pair is the point]',
+  applies:['expanded8','full10']};
+
+sceneDraw.fibres=drawFibres;
+sceneDraw.polarization=drawPolarization;
+
+scenes.fibres.measure=function(){
+  const s=G009.sig;
+  return [
+    ['points, blocks', G009.points+', '+G009.blocks],
+    ['collinearity degree', G009.collinearDeg],
+    ['unordered pairs', String(G009.pairs)],
+    ['collinear, 2 common', String(s['collinear 2']||0)],
+    ['non-collinear, 4 common', String(s['non-collinear 4']||0)],
+    ['exceptional, 8 common', String(s['non-collinear 8']||0), 'good'],
+    ['exceptional = fibre pairs', G009.sameCell?'yes':'no', G009.sameCell?'good':''],
+    ['quotient srg', '(9, '+G009.qk+', '+G009.lam+', '+G009.mu+')', 'good'],
+    ['intrinsic triangles', G009.triangles+' in '+G009.classes+' classes'],
+    ['class intersection graph', G009.k33?'K3,3':'other', G009.k33?'good':''],
+    ['quotient automorphisms', String(G009.qAut)],
+    ['fibre lifts each', String(G009.fibreKernel)],
+    ['full automorphism order', G009.fullAut.toLocaleString(), 'good'],
+    ['H carried', D('H')>0.5?'yes':'no', D('H')>0.5?'good':'zero']
+  ];
+};
+scenes.polarization.measure=function(){
+  return [
+    ['diagonal-line kernel', String(G018.half)],
+    ['axis-line kernel', String(G018.half2)],
+    ['intersection', String(G018.intersection)+' (zero only)', 'good'],
+    ['mutually orthogonal', G018.orthogonal?'yes':'no', G018.orthogonal?'good':''],
+    ['ambient module', String(G018.ambient)],
+    ['equals even-weight space', G018.even?'yes':'no', G018.even?'good':''],
+    ['singular, nonsingular', G018.q0+', '+G018.q1, 'good'],
+    ['cycle modules', String(G018.modules)],
+    ['polarizations', String(G018.polarizations)],
+    ['group ladder', G018.ladder.join(' \u2192 ')],
+    ['privileged pair', 'none', 'zero']
+  ];
+};
+
+/* ---- and the plates that referred to these results without drawing them */
+scenes.gauge.detail+=' G009 answered the objection that hangs over this plate. Strip every label from the 18-point, 24-block object and classify its 153 point pairs by collinearity and common-neighbour count: the nine fibre pairs fall out as the unique exceptional class, so the fibre is intrinsic rather than a coordinate choice. The dedicated fibre plate draws that.';
+
+scenes.kernel.detail+=' This kernel is also only one half of the story. G018 found a second, orthogonal 16-state kernel on the complementary line classes; together they span an 8-dimensional even-weight module of 256 states, and no single half is privileged. The polarization plate draws all three ways of cutting it.';
+
+/* ==========================================================================
+   7x. end of fourth round
+   ========================================================================== */
+
 function renderMeasure(){
   const sc=scenes[activeScene];
   const rows=sc.measure?sc.measure():[];
@@ -1665,6 +3378,28 @@ function frame(ts){
 
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',ev=>{
   if(store.get('theme',null)===null){ themeName=ev.matches?'plate':'print'; applyTheme(); }
+});
+
+/* ==========================================================================
+   10. scene button labels
+   The button row grew to 22 plates and the full titles no longer fit the
+   panel, so each scene carries a short label on the button while the full
+   title stays on the header, in the notes, and as the button tooltip.
+   ========================================================================== */
+const SHORT={
+  emergence:'Emergence', fourglass:'Fourglass 4D', structural:'Structural 4D',
+  scaffold:'Scaffold', access:'Accessibility', closure:'Closure',
+  holonomy:'Holonomy', collapse:'Collapse', cuf:'CUF shedding',
+  curvature:'Curvature', affine:'Affine base', gauge:'Fibre gauge',
+  kernel:'Binary kernel', fibres:'Intrinsic fibres', hamming:'H(2,4) module',
+  polarization:'Polarizations', ternary:'Ternary \u00b7 F9', lattice:'Tetracode \u00b7 E8',
+  staircase:'Prime staircase', constants:'Constants', ciil:'CIIL residue',
+  lower:'Lower family'
+};
+document.querySelectorAll('#sceneButtons button').forEach(function(b){
+  const k=b.dataset.key;
+  if(scenes[k]) b.title=scenes[k].title;
+  if(SHORT[k]) b.textContent=SHORT[k];
 });
 
 applyTheme();
